@@ -1,36 +1,31 @@
-package fr.univlyon1.mif13.tp1;
+package fr.univlyon1.mif13.tp1.dao;
 
-import fr.univlyon1.mif13.tp1.dao.Dao;
 import fr.univlyon1.mif13.tp1.model.User;
 
 import java.util.*;
 
 public class UserDao implements Dao<User> {
 
-    private List<User> users = new ArrayList<>();
+    private Map<String, User> users = new HashMap<>();
 
     public UserDao(){
-        users.add(new User("otman-le-rigolo", "password"));
-        users.add(new User("samy-le-pas-drole", "the-password-78"));
+        users.put("otman-le-rigolo", new User("otman-le-rigolo", "password"));
+        users.put("samy-le-pas-drole", new User("samy-le-pas-drole", "the-password-78"));
     }
 
     @Override
     public Optional<User> get(String id) {
-        return Optional.empty();
+        return Optional.ofNullable(users.get(id));
     }
 
     @Override
     public Set<String> getAll() {
-        Set<String> res = new HashSet<>();
-        for (User user: users){
-            res.add(user.getLogin());
-        }
-        return res;
+        return users.keySet();
     }
 
     @Override
     public void save(User user) {
-        users.add(user);
+        users.put(user.getLogin(), user);
     }
 
     @Override
@@ -42,11 +37,11 @@ public class UserDao implements Dao<User> {
                 params[1], "Password cannot be null"
         ));
 
-        users.add(user);
+        users.put(user.getLogin(), user);
     }
 
     @Override
     public void delete(User user) {
-        users.remove(user);
+        users.remove(user.getLogin());
     }
 }
