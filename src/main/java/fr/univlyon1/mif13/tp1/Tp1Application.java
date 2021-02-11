@@ -18,9 +18,14 @@ public class Tp1Application {
 	}
 
 	public static void main(String[] args) {
+
+		System.out.println("Test");
 		SpringApplication.run(Tp1Application.class, args);
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(Tp1Application.class);
 		UserDao userDao = ctx.getBean(UserDao.class);
+		System.out.println(userDao.getAll());
+		System.out.println(userDao.get("otman-le-rigolo"));
+		System.out.println(userDao.get("otman-le-pas-drole"));
 	}
 
 }
