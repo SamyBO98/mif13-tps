@@ -78,6 +78,7 @@ public class OperationController {
 
             if (opUser.get().isConnected())
                 opUser.get().disconnect();
+            else return ResponseEntity.status(404).build();
 
         } catch (NullPointerException | JWTVerificationException e) {
             return ResponseEntity.status(404).build();
