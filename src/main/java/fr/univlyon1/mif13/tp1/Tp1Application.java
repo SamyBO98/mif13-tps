@@ -22,14 +22,8 @@ public class Tp1Application {
 
 		SpringApplication.run(Tp1Application.class, args);
 
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(Tp1Application.class);
-		UserDao userDao = ctx.getBean(UserDao.class);
-		User user1 = new User("jean-clown", "vilain-password");
-		userDao.save(user1);
-
-		userDao.update(user1, new String[]{"jean-le-clown", "vilain-password"});
-
-		System.out.println(userDao.getAll());
+		//ApplicationContext ctx = new AnnotationConfigApplicationContext(Tp1Application.class);
+		//UserDao userDao = ctx.getBean(UserDao.class);
 
 	}
 
