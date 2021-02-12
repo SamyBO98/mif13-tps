@@ -61,19 +61,18 @@ public class JwtTokenUtils {
      *
      * @param subject le login de l'utilisateur
      * @param admin   si l'utilisateur est admin ou non
-     * @param origin     la requête HTTP pour pouvoir en extraire l'origine avec getOrigin()
+     * @param req     la requête HTTP pour pouvoir en extraire l'origine avec getOrigin()
      * @return le token signé
      * @throws JWTCreationException si les paramètres ne permettent pas de créer un token
      */
-    public static String generateToken(String subject, boolean admin, String origin) throws JWTCreationException {
+    public static String generateToken(String subject, boolean admin, HttpServletRequest req) throws JWTCreationException {
         return JWT.create()
                 .withIssuer(ISSUER)
                 .withSubject(subject)
-                .withAudience(origin)
+                .withAudience(getOrigin(req))
                 .withClaim("admin", admin)
                 .withExpiresAt(new Date(new Date().getTime() + LIFETIME))
                 .sign(algorithm);
-
     }
 
     /**
