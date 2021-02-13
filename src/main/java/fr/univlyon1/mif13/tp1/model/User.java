@@ -7,6 +7,10 @@ public class User {
     // Permet d'invalider une connexion même si le token est toujours valide
     private boolean connected;
 
+    public User(){
+        this.connected = false;
+    }
+
     public User(String login, String password) {
         this.login = login;
         this.password = password;
@@ -16,6 +20,10 @@ public class User {
 
     public String getLogin() {
         return login;
+    }
+
+    public String getPassword(){
+        return password;
     }
 
     public void setLogin(String login) {
