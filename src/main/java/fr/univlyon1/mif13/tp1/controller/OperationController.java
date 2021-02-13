@@ -63,7 +63,7 @@ public class OperationController {
      * Réalise la déconnexion
      */
     @DeleteMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestParam("token") String token){
+    public ResponseEntity<Void> logout(@RequestHeader("Authentication") String token){
         //Méthode pour récupérer la requête
         HttpServletRequest request = getRequest();
 
@@ -100,8 +100,12 @@ public class OperationController {
         HttpServletRequest request = getRequest();
 
         try{
-            String compare = verifyToken(token, request);
-            System.out.println(compare);
+            String login = verifyToken(token, request);
+
+            if (!userDao.get(login).get().isConnected()){
+                return ResponseEntity.status(404).build();
+            }
+
         } catch (NullPointerException | JWTVerificationException e) {
             return ResponseEntity.status(404).build();
         }

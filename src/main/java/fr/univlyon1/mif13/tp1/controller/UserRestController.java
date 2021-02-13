@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import fr.univlyon1.mif13.tp1.dao.UserDao;
 import fr.univlyon1.mif13.tp1.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
@@ -19,17 +21,19 @@ public class UserRestController {
 
     @GetMapping(value = "/users", produces = { "application/json", "application/xml" })
     @ResponseBody
-    public Set<String> getAllUsers(@RequestHeader("Accept") String acceptType) throws JsonProcessingException {
+    public Set<String> getAllUsers() {
         return userDao.getAll();
     }
 
     @GetMapping(value = "/users/{login}", produces = { "application/json", "application/xml" })
     @ResponseBody
-    public User getUser(@PathVariable("login") @NotNull String login, @RequestHeader("Accept") String acceptType) throws JsonProcessingException {
+    public User getUser(@PathVariable("login") @NotNull String login) {
         //On vérifie si le login n'existe pas
         Optional<User> opUser = userDao.get(login);
         if (opUser.isEmpty()){
-            return null;
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "The user did not exists."
+            );
         }
 
         return opUser.get();
@@ -42,7 +46,9 @@ public class UserRestController {
         Optional<User> opUser = userDao.get(user.getLogin());
 
         if (opUser.isPresent()){
-            return ResponseEntity.status(404).build();
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "The user already exists."
+            );
         }
 
         //On crée l'utilisateur
@@ -52,15 +58,19 @@ public class UserRestController {
     }
 
     @PutMapping(value = "/user/login", consumes = "application/json")
-    public ResponseEntity<Void> updateUser(@RequestBody User user) {
+    public ResponseEntity<Void> updateUser(@RequestBody String login, @RequestBody String password) {
         //On vérifie si le login n'existe pas
-        Optional<User> opUser = userDao.get(user.getLogin());
+        Optional<User> opUser = userDao.get(login);
         if (opUser.isEmpty()){
-            return ResponseEntity.status(404).build();
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "The user did not exists."
+            );
         }
 
+        User user = opUser.get();
+
         //On modifie l'utilisateur
-        userDao.update(user, new String[]{user.getLogin(), user.getPassword()});
+        userDao.update(user, new String[]{login, password});
 
         return ResponseEntity.status(204).build();
     }
@@ -70,7 +80,9 @@ public class UserRestController {
         //On vérifie si le login n'existe pas
         Optional<User> opUser = userDao.get(user.getLogin());
         if (opUser.isEmpty()){
-            return ResponseEntity.status(404).build();
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "The user did not exists."
+            );
         }
 
         //On supprime l'utilisateur

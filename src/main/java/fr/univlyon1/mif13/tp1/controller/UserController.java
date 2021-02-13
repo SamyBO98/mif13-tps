@@ -1,8 +1,6 @@
 package fr.univlyon1.mif13.tp1.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fr.univlyon1.mif13.tp1.dao.UserDao;
 import fr.univlyon1.mif13.tp1.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,27 +11,26 @@ import org.springframework.ui.Model;
 
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
-import java.util.Set;
 
 @Controller
 public class UserController {
 
     @Autowired
     private UserDao userDao;
-/*
+
     @GetMapping("/users")
-    public Set<String> getAllUsers(){
-        return userDao.getAll();
+    public String getAllUsers(Model model){
+        model.addAttribute("users", userDao.getAll());
+        return "users";
     }
 
 
- */
     @GetMapping(value = "/users/{login}")
     public String getUser(Model model, @PathVariable("login") @NotNull String login) throws JsonProcessingException {
         //On vérifie si le login n'existe pas
         Optional<User> opUser = userDao.get(login);
         if (opUser.isEmpty()){
-            return null;
+            throw new RuntimeException("Utilisateur non existant.");
         }
 
         model.addAttribute("user", opUser.get().getLogin());
