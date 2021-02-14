@@ -1,5 +1,5 @@
 variables:
-  CI_SSH_KEY: "./gitlabci.pem"
+  CI_SSH_KEY: "./gitlab-ci.pem"
 
 junit:
   image: maven:3.6.1-jdk-11 # docker image with Maven
