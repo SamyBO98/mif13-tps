@@ -58,19 +58,17 @@ public class UserRestController {
     }
 
     @PutMapping(value = "/user/login", consumes = "application/json")
-    public ResponseEntity<Void> updateUser(@RequestBody String login, @RequestBody String password) {
+    public ResponseEntity<Void> updateUser(@RequestBody User newUser) {
         //On vérifie si le login n'existe pas
-        Optional<User> opUser = userDao.get(login);
+        Optional<User> opUser = userDao.get(newUser.getLogin());
         if (opUser.isEmpty()){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "The user did not exists."
             );
         }
 
-        User user = opUser.get();
-
         //On modifie l'utilisateur
-        userDao.update(user, new String[]{login, password});
+        userDao.save(newUser);
 
         return ResponseEntity.status(204).build();
     }
