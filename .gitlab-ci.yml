@@ -7,8 +7,6 @@ junit:
     - . setup-mvn-proxy.sh
     - chmod 400 $CI_SSH_KEY
   script:
-    - mvn install
-    - mvn test
-    - mvn compile
+    - mvn clean package
     - ls /builds/p1709456/mif13-tps/target
     - scp -o StrictHostKeyChecking=no -i $CI_SSH_KEY /builds/p1709456/mif13-tps/target/tp1-0.0.1-SNAPSHOT.war gitlabci@192.168.75.118:/opt/tomcat/webapps/v1.war

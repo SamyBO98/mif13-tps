@@ -57,7 +57,7 @@ public class UserRestController {
         return ResponseEntity.status(204).build();
     }
 
-    @PutMapping(value = "/user/login", consumes = "application/json")
+    @PutMapping(value = "/users/login", consumes = "application/json")
     public ResponseEntity<Void> updateUser(@RequestBody User newUser) {
         //On vérifie si le login n'existe pas
         Optional<User> opUser = userDao.get(newUser.getLogin());
@@ -73,7 +73,7 @@ public class UserRestController {
         return ResponseEntity.status(204).build();
     }
 
-    @DeleteMapping(value = "/user/login", consumes = "application/json")
+    @DeleteMapping(value = "/users/login", consumes = "application/json")
     public ResponseEntity<Void> deleteUser(@RequestBody User user) {
         //On vérifie si le login n'existe pas
         Optional<User> opUser = userDao.get(user.getLogin());
