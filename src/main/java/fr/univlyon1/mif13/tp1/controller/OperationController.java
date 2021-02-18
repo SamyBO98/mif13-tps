@@ -3,13 +3,18 @@ package fr.univlyon1.mif13.tp1.controller;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import fr.univlyon1.mif13.tp1.dao.UserDao;
 import fr.univlyon1.mif13.tp1.model.User;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.naming.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,31 +32,40 @@ public class OperationController {
     private UserDao userDao;
 
     /**
-     * Procédure de login "simple" d'un utilisateur
-     * @param login Le login de l'utilisateur. L'utilisateur doit avoir été créé préalablement et son login doit être présent dans le DAO.
-     * @param password Le password à vérifier.
-     * @return Une ResponseEntity avec le JWT dans le header "Authentication" si le login s'est bien passé, et le code de statut approprié (204, 401 ou 404).
+     * Connect user.
+     * @param login User's login.
+     * @param password User's password.
+     * @param origin The origin.
+     * @return Response: success (204) / fail (404).
      */
+    @Operation(summary = "Connect user", description = "Connect an existing user", responses = {
+            @ApiResponse(responseCode = "204", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Wrong login or password")
+    })
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestParam("login") String login, @RequestParam("password") String password, @RequestHeader("Origin") String origin) throws AuthenticationException {
-        //On vérifie si l'utilisateur est bien enregistré
+    public ResponseEntity<Void> login(@RequestParam("login") @Schema(example = "otman-le-rigolo") String login, @RequestParam("password") @Schema(example = "password") String password, @RequestHeader("Origin") String origin) {
+        //Check if the user exists
         Optional<User> opUser = userDao.get(login);
         if (opUser.isEmpty()){
-            return ResponseEntity.status(404).build();
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "The user did not exists"
+            );
         }
 
-        //On vérifie si l'utilisateur a mit le bon mot de passe
+        //Authenticate the user using login and password
         User user = opUser.get();
         try{
             user.authenticate(password);
         } catch (AuthenticationException e){
-            return ResponseEntity.status(404).build();
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Wrong password"
+            );
         }
 
-        //Méthode pour récupérer la requête
+        //Get the request servlet
         HttpServletRequest request = getRequest();
 
-        //On génère le token JWT et le header correspondant à la réponse
+        //Generate JWT token and put it on Header ("Authentication")
         String jwtToken = generateToken(login, false, request);
         HttpHeaders response = new HttpHeaders();
         response.set("Authentication", jwtToken);
@@ -59,55 +73,67 @@ public class OperationController {
         return ResponseEntity.status(204).headers(response).build();
     }
 
-    /**
-     * Réalise la déconnexion
-     */
+
+    @Operation(summary = "Disconnect user", description = "Disconnect an existing user", responses = {
+            @ApiResponse(responseCode = "204", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Error: User not exists / Token is wrong / User is not connected")
+    })
     @DeleteMapping("/logout")
     public ResponseEntity<Void> logout(@RequestHeader("Authentication") String token){
-        //Méthode pour récupérer la requête
+        //Get the request servlet
         HttpServletRequest request = getRequest();
 
         try{
             String login = verifyToken(token, request);
 
-            //On vérifie si l'utilisateur est bien enregistré
+            //Check if the user exists
             Optional<User> opUser = userDao.get(login);
             if (opUser.isEmpty()){
-                return ResponseEntity.status(404).build();
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "The user did not exists"
+                );
             }
 
+            //Disconnect the user
             if (opUser.get().isConnected())
                 opUser.get().disconnect();
-            else return ResponseEntity.status(404).build();
+            else throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "The user is not connected"
+            );
 
         } catch (NullPointerException | JWTVerificationException e) {
-            return ResponseEntity.status(404).build();
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "The token is not correct"
+            );
         }
 
         return ResponseEntity.status(204).build();
-
     }
 
-    /**
-     * Méthode destinée au serveur Node pour valider l'authentification d'un utilisateur.
-     * @param token Le token JWT qui se trouve dans le header "Authentication" de la requête
-     * @param origin L'origine de la requête (pour la comparer avec celle du client, stockée dans le token JWT)
-     * @return Une réponse vide avec un code de statut approprié (204, 400, 401).
-     */
+
+    @Operation(summary = "Authenticate user", description = "AUthenticate an existing user", responses = {
+            @ApiResponse(responseCode = "204", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Error: Token is wrong / User is not connected")
+    })
     @GetMapping("/authenticate")
-    public ResponseEntity<Void> authenticate(@RequestParam("token") String token, @RequestParam("origin") String origin) {
-        //Méthode pour récupérer la requête
+    public ResponseEntity<Void> authenticate(@RequestParam("token") @Schema(example = "edit-this-token") String token, @RequestParam("origin") @Schema(example = "*/*") String origin) {
+        //Get the request servlet
         HttpServletRequest request = getRequest();
 
         try{
+            //Get the user by using JWT token and disconnect him
             String login = verifyToken(token, request);
 
             if (!userDao.get(login).get().isConnected()){
-                return ResponseEntity.status(404).build();
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "The user is not connected"
+                );
             }
 
         } catch (NullPointerException | JWTVerificationException e) {
-            return ResponseEntity.status(404).build();
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "The token is not correct"
+            );
         }
 
         return ResponseEntity.status(204).build();

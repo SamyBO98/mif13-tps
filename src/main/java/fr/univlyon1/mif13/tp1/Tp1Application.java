@@ -1,16 +1,35 @@
 package fr.univlyon1.mif13.tp1;
 
 import fr.univlyon1.mif13.tp1.dao.UserDao;
-import fr.univlyon1.mif13.tp1.model.User;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.ServerVariable;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@OpenAPIDefinition(
+		info = @Info(
+				title = "mif13 - tp1 & tp2 (gp17)",
+				version = "0.0",
+				description = "Basic API for testing some requests",
+				license = @License(name = "Apache 2.0", url = "http://foo.bar")
+		),
+		servers = {
+				@Server(
+						description = "Server 1",
+						url = "http://localhost:8080",
+						variables = {
+								@ServerVariable(name = "url", description = "Basic url (local)", defaultValue = "http://localhost:8080"),
+								@ServerVariable(name = "login", description = "Basic login", defaultValue = "otman-le-rigolo")
+						})
+		}
+)
 @SpringBootApplication
 @Configuration
 public class Tp1Application extends SpringBootServletInitializer {

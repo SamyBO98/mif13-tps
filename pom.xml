@@ -33,6 +33,22 @@
 			<version>2.11.1</version>
 		</dependency>
 
+		<!-- springdoc-api -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.5.4</version>
+		</dependency>
+
+		<!-- springdoc-api (json format) -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-webmvc-core</artifactId>
+			<version>1.5.4</version>
+		</dependency>
+
+
+
 		<!-- tomcat -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
