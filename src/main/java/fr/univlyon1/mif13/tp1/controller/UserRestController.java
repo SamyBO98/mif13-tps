@@ -152,7 +152,7 @@ public class UserRestController {
      * @return Response: success (204) / fail (404).
      */
     @Operation(summary = "Update user", description = "Update the login / password of an existing user", responses = {
-            @ApiResponse(responseCode = "204", description = "OK"),
+            @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "User not exists")
     })
     @PutMapping(value = "/users/{login}", consumes = "application/json")
@@ -170,7 +170,7 @@ public class UserRestController {
         userDao.delete(opUser.get());
         userDao.save(user);
 
-        return ResponseEntity.status(204).build();
+        return ResponseEntity.status(200).build();
     }
 
     @PutMapping(value = "/users/{login}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -180,14 +180,16 @@ public class UserRestController {
         //On vérifie si le login n'existe pas
         Optional<User> opUser = userDao.get(login);
         if (opUser.isEmpty()){
-            return ResponseEntity.status(404).build();
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "The user did not exists"
+            );
         }
 
         //On modifie l'utilisateur
         User user = opUser.get();
         userDao.update(user, new String[]{login, password});
 
-        return ResponseEntity.status(204).build();
+        return ResponseEntity.status(200).build();
     }
 
     /**
