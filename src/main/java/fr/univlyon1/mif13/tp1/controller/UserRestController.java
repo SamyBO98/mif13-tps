@@ -143,7 +143,7 @@ public class UserRestController {
         User user = new User(login, password);
         userDao.save(user);
 
-        return ResponseEntity.status(204).build();
+        return ResponseEntity.status(201).build();
     }
 
     /**
@@ -154,7 +154,8 @@ public class UserRestController {
      */
     @Operation(summary = "Update user", description = "Update the login / password of an existing user", responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "404", description = "User not exists")
+            @ApiResponse(responseCode = "404", description = "User not exists"),
+            @ApiResponse(responseCode = "409", description = "New User's login already exists")
     })
     @PutMapping(value = "/users/{login}", consumes = "application/json")
     public ResponseEntity<Void> updateUser(@PathVariable("login") @Schema(example = "otman-le-rigolo") @NotNull String oldLogin,
@@ -165,6 +166,15 @@ public class UserRestController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "The user did not exists"
             );
+        }
+
+        //Check if the new login already exists
+        if (!oldLogin.equals(user.getLogin())){
+            if (userDao.get(user.getLogin()).isPresent()){
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT, "The new user's login already exists"
+                );
+            }
         }
 
         //Update the user (bad method)
@@ -179,16 +189,31 @@ public class UserRestController {
                                            @Parameter(description = "new login") @Schema(example = "otman-le-pas-marrant") @NotNull String login,
                                            @Parameter(description = "password") @Schema(example = "newpassword") @NotNull String password) {
         //On vérifie si le login n'existe pas
-        Optional<User> opUser = userDao.get(login);
+        Optional<User> opUser = userDao.get(oldLogin);
         if (opUser.isEmpty()){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "The user did not exists"
             );
         }
 
+        //Check if the new login already exists
+        if (!oldLogin.equals(login)){
+            if (userDao.get(login).isPresent()){
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT, "The new user's login already exists"
+                );
+            }
+        }
+
         //On modifie l'utilisateur
-        User user = opUser.get();
-        userDao.update(user, new String[]{login, password});
+        try{
+            User user = opUser.get();
+            userDao.update(user, new String[]{login, password});
+        } catch (Exception e){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Missing arguments"
+            );
+        }
 
         return ResponseEntity.status(200).build();
     }
