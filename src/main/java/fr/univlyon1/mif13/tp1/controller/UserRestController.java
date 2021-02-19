@@ -55,7 +55,6 @@ public class UserRestController {
     }
 
 
-
     /**
      * Return data from a specific user.
      * @param login User's login.
@@ -93,7 +92,9 @@ public class UserRestController {
         //Check if the user exists
         Optional<User> opUser = userDao.get(login);
         if (opUser.isEmpty()){
-            throw new RuntimeException("Utilisateur non existant.");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "The user did not exists"
+            );
         }
 
         ModelAndView mav = new ModelAndView("user");

@@ -68,7 +68,7 @@ public class OperationController {
         //Generate JWT token and put it on Header ("Authentication")
         String jwtToken = generateToken(login, false, request);
         HttpHeaders response = new HttpHeaders();
-        response.set("Authentication", jwtToken);
+        response.set("Authorization", jwtToken);
 
         return ResponseEntity.status(204).headers(response).build();
     }
@@ -79,7 +79,7 @@ public class OperationController {
             @ApiResponse(responseCode = "404", description = "Error: User not exists / Token is wrong / User is not connected")
     })
     @DeleteMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestHeader("Authentication") String token){
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token){
         //Get the request servlet
         HttpServletRequest request = getRequest();
 

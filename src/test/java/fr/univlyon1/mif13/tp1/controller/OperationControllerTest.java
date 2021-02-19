@@ -35,7 +35,7 @@ public class OperationControllerTest {
                 .andReturn();
 
         //Asserts
-        String goodAuthorization = goodResult.getResponse().getHeader("Authentication");
+        String goodAuthorization = goodResult.getResponse().getHeader("Authorization");
         assert(goodAuthorization != null && !goodAuthorization.equals(""));
         return goodAuthorization;
     }
@@ -59,7 +59,7 @@ public class OperationControllerTest {
                 .andReturn();
 
         //Asserts
-        String badAuthorization = badResult.getResponse().getHeader("Authentication");
+        String badAuthorization = badResult.getResponse().getHeader("Authorization");
         assert(badAuthorization == null);
         return null;
     }
@@ -83,7 +83,7 @@ public class OperationControllerTest {
                 .andReturn();
 
         //Asserts
-        String badAuthorization = badResult.getResponse().getHeader("Authentication");
+        String badAuthorization = badResult.getResponse().getHeader("Authorization");
         assert(badAuthorization == null);
         return null;
     }
@@ -123,7 +123,7 @@ public class OperationControllerTest {
         //Launch request (good one)
         mock.perform(MockMvcRequestBuilders
                 .delete(url)
-                .header("Authentication", goodLogin()))
+                .header("Authorization", goodLogin()))
                 .andExpect(status().is(204));
 
         //Launch request (forget parameter)
