@@ -2,6 +2,7 @@ package fr.univlyon1.mif13.tp1.controller;
 
 import fr.univlyon1.mif13.tp1.dao.UserDao;
 import fr.univlyon1.mif13.tp1.model.User;
+import fr.univlyon1.mif13.tp1.model.UserModel;
 import fr.univlyon1.mif13.tp1.model.Users;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -114,7 +115,7 @@ public class UserRestController {
             @ApiResponse(responseCode = "404", description = "User already exists")
     })
     @PostMapping(value = "/users", consumes = "application/json")
-    public ResponseEntity<Void> createUser(@RequestBody User user) {
+    public ResponseEntity<Void> createUser(@RequestBody UserModel user) {
         //Check if the user didn't exists
         Optional<User> opUser = userDao.get(user.getLogin());
         if (opUser.isPresent()){
@@ -124,7 +125,7 @@ public class UserRestController {
         }
 
         //Create the user
-        userDao.save(user);
+        userDao.save(new User(user.getLogin(), user.getPassword()));
 
         return ResponseEntity.status(201).build();
     }
@@ -152,14 +153,14 @@ public class UserRestController {
      * @param user params for the new user.
      * @return Response: success (204) / fail (404).
      */
-    @Operation(summary = "Update user", description = "Update the login / password of an existing user", responses = {
+    @Operation(summary = "Update user", description = "Update the login of an existing user", responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "User not exists"),
             @ApiResponse(responseCode = "409", description = "New User's login already exists")
     })
     @PutMapping(value = "/users/{login}", consumes = "application/json")
     public ResponseEntity<Void> updateUser(@PathVariable("login") @Schema(example = "otman-le-rigolo") @NotNull String oldLogin,
-                                           @RequestBody User user) {
+                                           @RequestBody UserModel user) {
         //Check if the user exists
         Optional<User> opUser = userDao.get(oldLogin);
         if (opUser.isEmpty()){
@@ -177,9 +178,14 @@ public class UserRestController {
             }
         }
 
-        //Update the user (bad method)
-        userDao.delete(opUser.get());
-        userDao.save(user);
+        //Trying to update the user
+        try{
+            userDao.update(opUser.get(), new String[]{ user.getLogin(), user.getPassword() });
+        } catch (Exception e){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Missing arguments"
+            );
+        }
 
         return ResponseEntity.status(200).build();
     }
@@ -205,10 +211,10 @@ public class UserRestController {
             }
         }
 
-        //On modifie l'utilisateur
+        //Trying to update the user
         try{
             User user = opUser.get();
-            userDao.update(user, new String[]{login, password});
+            userDao.update(user, new String[]{ login, password });
         } catch (Exception e){
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Missing arguments"

@@ -1,11 +1,11 @@
 package fr.univlyon1.mif13.tp1.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.univlyon1.mif13.tp1.model.User;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -18,11 +18,17 @@ import java.util.Objects;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserRestController.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserRestControllerTest {
 
     @Autowired
     private MockMvc mock;
-    ObjectMapper objectMapper;
+    private String userBeingCreated = "Thanos";
+    private String userNotExists = "NotThanos";
+    private String anotherUserBeingCreated = "Thor";
+    private String anotherUserNotExists = "Thar";
+    private String password1 = "password";
+    private String password2 = "password2";
 
     /**
      * Get all users registered.
@@ -72,42 +78,53 @@ public class UserRestControllerTest {
      * @throws Exception Exception.
      */
     @Test
-    @Order(2)
+    @Order(3)
     public void getUser() throws Exception {
         String url = "/users/{login}";
-        String goodLogin = "otman-le-rigolo";
-        String badLogin = "otman-le-pas-drole";
+
+        /*Prerequisites (uncomment it for unitary test)
+        mock.perform(MockMvcRequestBuilders
+                .post("/users")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .param("login", userBeingCreated)
+                .param("password", password1));
+        mock.perform(MockMvcRequestBuilders
+                .post("/users")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .param("login", anotherUserBeingCreated)
+                .param("password", password2));
+         */
 
         //Launch request (HTML)
         MvcResult resultHtml = mock.perform(MockMvcRequestBuilders
-                .get(url, goodLogin)
+                .get(url, userBeingCreated)
                 .header("Accept", "text/html"))
                 .andExpect(status().is(200))
                 .andReturn();
 
         //Launch request (JSON)
         MvcResult resultJson = mock.perform(MockMvcRequestBuilders
-                .get(url, goodLogin)
+                .get(url, userBeingCreated)
                 .header("Accept", "application/json"))
                 .andExpect(status().is(200))
                 .andReturn();
 
         //Launch request (XML)
         MvcResult resultXml = mock.perform(MockMvcRequestBuilders
-                .get(url, goodLogin)
+                .get(url, anotherUserBeingCreated)
                 .header("Accept", "application/xml"))
                 .andExpect(status().is(200))
                 .andReturn();
 
         //Launch request (DEFAULT)
         MvcResult resultDefault = mock.perform(MockMvcRequestBuilders
-                .get(url, goodLogin))
+                .get(url, anotherUserBeingCreated))
                 .andExpect(status().is(200))
                 .andReturn();
 
         //Launch request (User not exists)
         mock.perform(MockMvcRequestBuilders
-                .get(url, badLogin)
+                .get(url, userNotExists)
                 .header("Accept", "text/html"))
                 .andExpect(status().is(404))
                 .andReturn();
@@ -119,25 +136,28 @@ public class UserRestControllerTest {
         assert(Objects.equals(resultDefault.getResponse().getContentType(), "application/json"));
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(resultDefault.getResponse().getContentAsString());
-        assert(jsonObject.get("login").equals(goodLogin));
+        assert(jsonObject.get("login").equals(anotherUserBeingCreated));
         assert(jsonObject.get("connected").equals(false));
     }
 
     @Test
-    @Order(3)
+    @Order(2)
     public void createUser() throws Exception {
         String url = "/users";
-        String password = "password";
-        String user1 = "user1";
-        String user2 = "user2";
-        String existingUser = "otman-le-rigolo";
+
+        /*Prerequisites (uncomment it for unitary test)
+        mock.perform(MockMvcRequestBuilders
+                .delete(url + "/{login}", userBeingCreated));
+        mock.perform(MockMvcRequestBuilders
+                .delete(url + "/{login}", anotherUserBeingCreated));
+        */
 
         //Launch request (HTML)
         mock.perform(MockMvcRequestBuilders
                 .post(url)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .param("login", user1)
-                .param("password", password))
+                .param("login", userBeingCreated)
+                .param("password", password1))
                 .andExpect(status().is(201))
                 .andReturn();
 
@@ -145,7 +165,7 @@ public class UserRestControllerTest {
         mock.perform(MockMvcRequestBuilders
                 .post(url)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"login\": \"" + user2 + "\", \"password\": \"" + password + "\"}"))
+                .content("{\"login\": \"" + anotherUserBeingCreated + "\", \"password\": \"" + password2 + "\"}"))
                 .andExpect(status().is(201))
                 .andReturn();
 
@@ -153,8 +173,8 @@ public class UserRestControllerTest {
         mock.perform(MockMvcRequestBuilders
                 .post(url)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .param("login", existingUser)
-                .param("password", password))
+                .param("login", userBeingCreated)
+                .param("password", password1))
                 .andExpect(status().is(404));
 
         //Launch request (Missing argument)
@@ -166,10 +186,10 @@ public class UserRestControllerTest {
 
         //Verify if both users exists
         mock.perform(MockMvcRequestBuilders
-                .get(url + "/{login}", user1))
+                .get(url + "/{login}", userBeingCreated))
                 .andExpect(status().is(200));
         mock.perform(MockMvcRequestBuilders
-                .get(url + "/{login}", user2))
+                .get(url + "/{login}", anotherUserBeingCreated))
                 .andExpect(status().is(200));
 
     }
@@ -178,66 +198,113 @@ public class UserRestControllerTest {
     @Order(4)
     public void updateUser() throws Exception {
         String url = "/users/{login}";
-        String password = "password";
-        String userHtml = "otman-le-rigolo";
-        String userJson = "samy-le-pas-drole";
-        String newUserHtml = "otman-le-rigolo-html";
-        String newUserJson = "samy-le-pas-drole-json";
+
+        /*Prerequisites (uncomment it for unitary test)
+        mock.perform(MockMvcRequestBuilders
+                .post("/users")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .param("login", userBeingCreated)
+                .param("password", password1));
+        mock.perform(MockMvcRequestBuilders
+                .post("/users")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .param("login", anotherUserBeingCreated)
+                .param("password", password2));
+        */
 
         //Launch request (HTML)
         mock.perform(MockMvcRequestBuilders
-                .put(url, userHtml)
+                .put(url, userBeingCreated)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .param("login", newUserHtml)
-                .param("password", password))
+                .param("login", userNotExists)
+                .param("password", password1))
                 .andExpect(status().is(200))
                 .andReturn();
 
         //Verify if the user was updated (HTML)
         mock.perform(MockMvcRequestBuilders
-                .get(url, userHtml))
+                .get(url, userBeingCreated))
                 .andExpect(status().is(404));
         mock.perform(MockMvcRequestBuilders
-                .get(url, newUserHtml))
+                .get(url, userNotExists))
                 .andExpect(status().is(200));
 
         //Launch request (JSON)
         mock.perform(MockMvcRequestBuilders
-                .put(url, userJson)
+                .put(url, anotherUserBeingCreated)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"login\": \"" + newUserJson + "\", \"password\": \"" + password + "\"}"))
-                .andExpect(status().is(200))
-                .andReturn();
+                .content("{\"login\": \"" + anotherUserNotExists + "\", \"password\": \"" + password2 + "\"}"))
+                .andExpect(status().is(200));
 
         //Verify if the user was updated (JSON)
         mock.perform(MockMvcRequestBuilders
-                .get(url, userJson))
+                .get(url, anotherUserBeingCreated))
                 .andExpect(status().is(404));
         mock.perform(MockMvcRequestBuilders
-                .get(url, newUserJson))
+                .get(url, anotherUserNotExists))
                 .andExpect(status().is(200));
 
         //Launch request (User not exists)
         mock.perform(MockMvcRequestBuilders
-                .put(url, "this-user-not-exists")
+                .put(url, userBeingCreated)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .param("login", userHtml)
-                .param("password", password))
+                .param("login", userNotExists)
+                .param("password", password1))
                 .andExpect(status().is(404));
 
         //Launch request (New user's login already exists)
         mock.perform(MockMvcRequestBuilders
-                .put(url, newUserJson)
+                .put(url, userNotExists)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .param("login", newUserHtml)
-                .param("password", password))
+                .param("login", anotherUserNotExists)
+                .param("password", password1))
                 .andExpect(status().is(409));
 
         //Launch request (Missing argument)
         mock.perform(MockMvcRequestBuilders
-                .put(url, newUserHtml)
+                .put(url, userNotExists)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
                 .andExpect(status().is(400));
+    }
+
+    @Test
+    @Order(5)
+    public void deleteUser() throws Exception {
+        String url = "/users/{login}";
+
+        /*Prerequisites (uncomment it for unitary test)
+        mock.perform(MockMvcRequestBuilders
+                .post("/users")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .param("login", userBeingCreated)
+                .param("password", password1));
+        mock.perform(MockMvcRequestBuilders
+                .post("/users")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .param("login", anotherUserBeingCreated)
+                .param("password", password2));
+        mock.perform(MockMvcRequestBuilders
+                .delete(url, userNotExists));
+        mock.perform(MockMvcRequestBuilders
+                .delete(url, anotherUserNotExists));
+        */
+
+        //Launch requests (Pass)
+        mock.perform(MockMvcRequestBuilders
+                .delete(url, anotherUserNotExists))
+                .andExpect(status().is(204));
+
+        //Launch request (Not pass)
+        mock.perform(MockMvcRequestBuilders
+                .delete(url, userBeingCreated))
+                .andExpect(status().is(404));
+        mock.perform(MockMvcRequestBuilders
+                .delete(url, userNotExists))
+                .andExpect(status().is(404));
+        mock.perform(MockMvcRequestBuilders
+                .delete(url, anotherUserNotExists))
+                .andExpect(status().is(404));
+
     }
 
 }
