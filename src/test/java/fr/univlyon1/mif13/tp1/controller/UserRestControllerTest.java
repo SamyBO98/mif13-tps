@@ -124,8 +124,7 @@ public class UserRestControllerTest {
 
         //Launch request (User not exists)
         mock.perform(MockMvcRequestBuilders
-                .get(url, userNotExists)
-                .header("Accept", "text/html"))
+                .get(url, userNotExists))
                 .andExpect(status().is(404))
                 .andReturn();
 
@@ -258,7 +257,7 @@ public class UserRestControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .param("login", anotherUserNotExists)
                 .param("password", password1))
-                .andExpect(status().is(409));
+                .andExpect(status().is(404));
 
         //Launch request (Missing argument)
         mock.perform(MockMvcRequestBuilders
@@ -291,6 +290,9 @@ public class UserRestControllerTest {
 
         //Launch requests (Pass)
         mock.perform(MockMvcRequestBuilders
+                .delete(url, userNotExists))
+                .andExpect(status().is(204));
+        mock.perform(MockMvcRequestBuilders
                 .delete(url, anotherUserNotExists))
                 .andExpect(status().is(204));
 
@@ -300,6 +302,9 @@ public class UserRestControllerTest {
                 .andExpect(status().is(404));
         mock.perform(MockMvcRequestBuilders
                 .delete(url, userNotExists))
+                .andExpect(status().is(404));
+        mock.perform(MockMvcRequestBuilders
+                .delete(url, anotherUserBeingCreated))
                 .andExpect(status().is(404));
         mock.perform(MockMvcRequestBuilders
                 .delete(url, anotherUserNotExists))

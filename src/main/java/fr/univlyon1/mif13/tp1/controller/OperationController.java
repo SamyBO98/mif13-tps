@@ -2,6 +2,10 @@ package fr.univlyon1.mif13.tp1.controller;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import fr.univlyon1.mif13.tp1.dao.UserDao;
+import fr.univlyon1.mif13.tp1.exception.TokenException;
+import fr.univlyon1.mif13.tp1.exception.UserConnectedException;
+import fr.univlyon1.mif13.tp1.exception.UserLoginException;
+import fr.univlyon1.mif13.tp1.exception.UserPasswordException;
 import fr.univlyon1.mif13.tp1.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -47,9 +51,7 @@ public class OperationController {
         //Check if the user exists
         Optional<User> opUser = userDao.get(login);
         if (opUser.isEmpty()){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "The user did not exists"
-            );
+            throw new UserLoginException(login, false);
         }
 
         //Authenticate the user using login and password
@@ -57,9 +59,7 @@ public class OperationController {
         try{
             user.authenticate(password);
         } catch (AuthenticationException e){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Wrong password"
-            );
+            throw new UserPasswordException();
         }
 
         //Get the request servlet
@@ -89,22 +89,16 @@ public class OperationController {
             //Check if the user exists
             Optional<User> opUser = userDao.get(login);
             if (opUser.isEmpty()){
-                throw new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "The user did not exists"
-                );
+                throw new UserLoginException(login, false);
             }
 
             //Disconnect the user
             if (opUser.get().isConnected())
                 opUser.get().disconnect();
-            else throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "The user is not connected"
-            );
+            else throw new UserConnectedException(login, false);
 
         } catch (NullPointerException | JWTVerificationException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "The token is not correct"
-            );
+            throw new TokenException();
         }
 
         return ResponseEntity.status(204).build();
@@ -125,15 +119,11 @@ public class OperationController {
             String login = verifyToken(token, request);
 
             if (!userDao.get(login).get().isConnected()){
-                throw new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "The user is not connected"
-                );
+                throw new UserConnectedException(login, false);
             }
 
         } catch (NullPointerException | JWTVerificationException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "The token is not correct"
-            );
+            throw new TokenException();
         }
 
         return ResponseEntity.status(204).build();

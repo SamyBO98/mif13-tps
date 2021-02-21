@@ -1,6 +1,7 @@
 package fr.univlyon1.mif13.tp1.controller;
 
 import fr.univlyon1.mif13.tp1.dao.UserDao;
+import fr.univlyon1.mif13.tp1.exception.UserLoginException;
 import fr.univlyon1.mif13.tp1.model.User;
 import fr.univlyon1.mif13.tp1.model.UserModel;
 import fr.univlyon1.mif13.tp1.model.Users;
@@ -75,9 +76,7 @@ public class UserRestController {
         //Check if the user exists
         Optional<User> opUser = userDao.get(login);
         if (opUser.isEmpty()){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "The user did not exists"
-            );
+            throw new UserLoginException(login, false);
         }
 
         return opUser.get();
@@ -88,14 +87,12 @@ public class UserRestController {
      * @param login User's login.
      * @return User's data.
      */
-    @GetMapping(value = "/users/{login}")
+    @GetMapping(value = "/users/{login}", produces = "text/html")
     public ModelAndView getUserHtml(@PathVariable("login") @Schema(example = "otman-le-rigolo") @NotNull String login) {
         //Check if the user exists
         Optional<User> opUser = userDao.get(login);
         if (opUser.isEmpty()){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "The user did not exists"
-            );
+            throw new UserLoginException(login, false);
         }
 
         ModelAndView mav = new ModelAndView("user");
@@ -119,9 +116,7 @@ public class UserRestController {
         //Check if the user didn't exists
         Optional<User> opUser = userDao.get(user.getLogin());
         if (opUser.isPresent()){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "The user already exists"
-            );
+            throw new UserLoginException(user.getLogin(), true);
         }
 
         //Create the user
@@ -137,7 +132,7 @@ public class UserRestController {
         Optional<User> opUser = userDao.get(login);
 
         if (opUser.isPresent()){
-            return ResponseEntity.status(404).build();
+            throw new UserLoginException(login, true);
         }
 
         //On crée l'utilisateur
@@ -164,28 +159,17 @@ public class UserRestController {
         //Check if the user exists
         Optional<User> opUser = userDao.get(oldLogin);
         if (opUser.isEmpty()){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "The user did not exists"
-            );
+            throw new UserLoginException(oldLogin, false);
         }
 
         //Check if the new login already exists
         if (!oldLogin.equals(user.getLogin())){
             if (userDao.get(user.getLogin()).isPresent()){
-                throw new ResponseStatusException(
-                        HttpStatus.CONFLICT, "The new user's login already exists"
-                );
+                throw new UserLoginException(user.getLogin(), true);
             }
         }
 
-        //Trying to update the user
-        try{
-            userDao.update(opUser.get(), new String[]{ user.getLogin(), user.getPassword() });
-        } catch (Exception e){
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Missing arguments"
-            );
-        }
+        userDao.update(opUser.get(), new String[]{ user.getLogin(), user.getPassword() });
 
         return ResponseEntity.status(200).build();
     }
@@ -197,29 +181,19 @@ public class UserRestController {
         //On vérifie si le login n'existe pas
         Optional<User> opUser = userDao.get(oldLogin);
         if (opUser.isEmpty()){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "The user did not exists"
-            );
+            throw new UserLoginException(oldLogin, false);
         }
 
         //Check if the new login already exists
         if (!oldLogin.equals(login)){
             if (userDao.get(login).isPresent()){
-                throw new ResponseStatusException(
-                        HttpStatus.CONFLICT, "The new user's login already exists"
-                );
+                throw new UserLoginException(login, true);
             }
         }
 
-        //Trying to update the user
-        try{
-            User user = opUser.get();
-            userDao.update(user, new String[]{ login, password });
-        } catch (Exception e){
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Missing arguments"
-            );
-        }
+
+        User user = opUser.get();
+        userDao.update(user, new String[]{ login, password });
 
         return ResponseEntity.status(200).build();
     }
@@ -238,9 +212,7 @@ public class UserRestController {
         //Check if the user exists
         Optional<User> opUser = userDao.get(login);
         if (opUser.isEmpty()){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "The user did not exists"
-            );
+            throw new UserLoginException(login, false);
         }
 
         //Delete the user

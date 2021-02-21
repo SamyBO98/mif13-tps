@@ -1,5 +1,6 @@
 package fr.univlyon1.mif13.tp1.dao;
 
+import fr.univlyon1.mif13.tp1.exception.MissingArgumentsException;
 import fr.univlyon1.mif13.tp1.model.User;
 
 import java.util.*;
@@ -30,16 +31,22 @@ public class UserDao implements Dao<User> {
 
     @Override
     public void update(User user, String[] params) {
-        User userUpdated = user;
+        if (params == null){
+            throw new MissingArgumentsException();
+        } else {
+            if (params.length != 2 || params[0] == null || params[1] == null){
+                throw new MissingArgumentsException();
+            }
+        }
         users.remove(user.getLogin());
-        userUpdated.setLogin(Objects.requireNonNull(
+        user.setLogin(Objects.requireNonNull(
                 params[0], "Login cannot be null"
         ));
-        userUpdated.setPassword(Objects.requireNonNull(
+        user.setPassword(Objects.requireNonNull(
                 params[1], "Password cannot be null"
         ));
 
-        users.put(userUpdated.getLogin(), userUpdated);
+        users.put(user.getLogin(), user);
     }
 
     @Override
