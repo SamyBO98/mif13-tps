@@ -12,13 +12,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.naming.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +27,7 @@ import static fr.univlyon1.mif13.tp1.utils.JwtTokenUtils.generateToken;
 import static fr.univlyon1.mif13.tp1.utils.JwtTokenUtils.verifyToken;
 
 @Controller
+@CrossOrigin(origins = {"http://localhost", "http://192.168.75.118", "https://192.168.75.118"})
 public class OperationController {
 
     //DAO
@@ -68,7 +67,8 @@ public class OperationController {
         //Generate JWT token and put it on Header ("Authentication")
         String jwtToken = generateToken(login, false, request);
         HttpHeaders response = new HttpHeaders();
-        response.set("Authorization", jwtToken);
+        response.add("Authorization", "Bearer " + jwtToken);
+        response.add("Access-Control-Expose-Headers", "Authorization");
 
         return ResponseEntity.status(204).headers(response).build();
     }
@@ -84,7 +84,7 @@ public class OperationController {
         HttpServletRequest request = getRequest();
 
         try{
-            String login = verifyToken(token, request);
+            String login = verifyToken(token.replace("Bearer ", ""), request);
 
             //Check if the user exists
             Optional<User> opUser = userDao.get(login);
@@ -105,7 +105,7 @@ public class OperationController {
     }
 
 
-    @Operation(summary = "Authenticate user", description = "AUthenticate an existing user", responses = {
+    @Operation(summary = "Authenticate user", description = "Authenticate an existing user", responses = {
             @ApiResponse(responseCode = "204", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Error: Token is wrong / User is not connected")
     })
@@ -116,7 +116,7 @@ public class OperationController {
 
         try{
             //Get the user by using JWT token and disconnect him
-            String login = verifyToken(token, request);
+            String login = verifyToken(token.replace("Bearer ", ""), request);
 
             if (!userDao.get(login).get().isConnected()){
                 throw new UserConnectedException(login, false);

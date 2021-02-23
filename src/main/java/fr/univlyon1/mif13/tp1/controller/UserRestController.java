@@ -12,11 +12,9 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.constraints.NotNull;
@@ -72,6 +70,7 @@ public class UserRestController {
     })
     @GetMapping(value = "/users/{login}", produces = { "application/json", "application/xml" })
     @ResponseBody
+    @CrossOrigin(origins = {"http://localhost", "http://192.168.75.118", "https://192.168.75.118"})
     public User getUser(@PathVariable("login") @Schema(example = "otman-le-rigolo") @NotNull String login) {
         //Check if the user exists
         Optional<User> opUser = userDao.get(login);
@@ -88,6 +87,7 @@ public class UserRestController {
      * @return User's data.
      */
     @GetMapping(value = "/users/{login}", produces = "text/html")
+    @CrossOrigin(origins = {"http://localhost", "http://192.168.75.118", "https://192.168.75.118"})
     public ModelAndView getUserHtml(@PathVariable("login") @Schema(example = "otman-le-rigolo") @NotNull String login) {
         //Check if the user exists
         Optional<User> opUser = userDao.get(login);

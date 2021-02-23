@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OperationControllerTest {
 
+
     @Autowired
     private MockMvc mock;
 
@@ -33,7 +34,7 @@ public class OperationControllerTest {
                 .post(url)
                 .param("login", "otman-le-rigolo")
                 .param("password", "password")
-                .header("Origin", "*/*"))
+                .header("Origin", "http://localhost"))
                 .andExpect(status().is(204))
                 .andReturn();
 
@@ -57,7 +58,7 @@ public class OperationControllerTest {
                 .post(url)
                 .param("login", "non existing user")
                 .param("password", "password")
-                .header("Origin", "*/*"))
+                .header("Origin", "http://localhost"))
                 .andExpect(status().is(404))
                 .andReturn();
 
@@ -81,7 +82,7 @@ public class OperationControllerTest {
         MvcResult badResult = mock.perform(MockMvcRequestBuilders
                 .post(url)
                 .param("password", "password")
-                .header("Origin", "*/*"))
+                .header("Origin", "http://localhost"))
                 .andExpect(status().is(400))
                 .andReturn();
 
