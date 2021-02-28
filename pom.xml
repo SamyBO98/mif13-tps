@@ -16,6 +16,7 @@
 	<description>First practical work for mif13 teaching</description>
 	<properties>
 		<java.version>11</java.version>
+		<start-class>fr.univlyon1.mif13.tp1.Tp1Application</start-class>
 	</properties>
 	<dependencies>
 
@@ -90,15 +91,64 @@
 			<scope>test</scope>
 		</dependency>
 
-
 	</dependencies>
 
 	<build>
+
+		<sourceDirectory>users/src/main/java</sourceDirectory>
+		<testSourceDirectory>users/src/test/java</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>users/src/main/resources</directory>
+			</resource>
+		</resources>
+
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<!-- generate yaml file -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.3.3.RELEASE</version>
+				<executions>
+					<execution>
+						<id>pre-integration-test</id>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>post-integration-test</id>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-maven-plugin</artifactId>
+				<version>0.2</version>
+				<executions>
+					<execution>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<apiDocsUrl>http://localhost:8080/v3/api-docs</apiDocsUrl>
+					<outputFileName>users-api.yaml</outputFileName>
+					<outputDir>./</outputDir>
+				</configuration>
+			</plugin>
+
+
 		</plugins>
 	</build>
 
