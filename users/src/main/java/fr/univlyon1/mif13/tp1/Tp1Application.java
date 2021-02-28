@@ -29,10 +29,17 @@ import org.springframework.context.annotation.Configuration;
 								@ServerVariable(name = "login", description = "Basic login", defaultValue = "otman-le-rigolo")
 						}),
 				@Server(
-						description = "VM",
+						description = "VM (HTTP)",
 						url = "http://192.168.75.118:8080/v1",
 						variables = {
 								@ServerVariable(name = "url", description = "VM's URL", defaultValue = "http://192.168.75.118:8080/v1"),
+								@ServerVariable(name = "login", description = "Basic login", defaultValue = "otman-le-rigolo")
+						}),
+				@Server(
+						description = "VM (HTTP)",
+						url = "https://192.168.75.118/api/v1",
+						variables = {
+								@ServerVariable(name = "url", description = "VM's URL", defaultValue = "https://192.168.75.118/api/v1"),
 								@ServerVariable(name = "login", description = "Basic login", defaultValue = "otman-le-rigolo")
 						})
 		}
