@@ -174,30 +174,6 @@ public class UserRestController {
         return ResponseEntity.status(200).build();
     }
 
-    @PutMapping(value = "/users/{login}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<Void> updateUser(@PathVariable("login") @Schema(example = "otman-le-rigolo") @NotNull String oldLogin,
-                                           @Parameter(description = "new login") @Schema(example = "otman-le-pas-marrant") @NotNull String login,
-                                           @Parameter(description = "password") @Schema(example = "newpassword") @NotNull String password) {
-        //On vérifie si le login n'existe pas
-        Optional<User> opUser = userDao.get(oldLogin);
-        if (opUser.isEmpty()){
-            throw new UserLoginException(oldLogin, false);
-        }
-
-        //Check if the new login already exists
-        if (!oldLogin.equals(login)){
-            if (userDao.get(login).isPresent()){
-                throw new UserLoginException(login, true);
-            }
-        }
-
-
-        User user = opUser.get();
-        userDao.update(user, new String[]{ login, password });
-
-        return ResponseEntity.status(200).build();
-    }
-
     /**
      * Delete user.
      * @param login the user's login.

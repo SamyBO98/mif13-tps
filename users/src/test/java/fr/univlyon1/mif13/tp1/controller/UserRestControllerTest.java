@@ -211,23 +211,6 @@ public class UserRestControllerTest {
                 .param("password", password2));
         */
 
-        //Launch request (HTML)
-        mock.perform(MockMvcRequestBuilders
-                .put(url, userBeingCreated)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .param("login", userNotExists)
-                .param("password", password1))
-                .andExpect(status().is(200))
-                .andReturn();
-
-        //Verify if the user was updated (HTML)
-        mock.perform(MockMvcRequestBuilders
-                .get(url, userBeingCreated))
-                .andExpect(status().is(404));
-        mock.perform(MockMvcRequestBuilders
-                .get(url, userNotExists))
-                .andExpect(status().is(200));
-
         //Launch request (JSON)
         mock.perform(MockMvcRequestBuilders
                 .put(url, anotherUserBeingCreated)
@@ -243,26 +226,25 @@ public class UserRestControllerTest {
                 .get(url, anotherUserNotExists))
                 .andExpect(status().is(200));
 
-        //Launch request (User not exists)
+        //Launch request (HTML should not pass)
         mock.perform(MockMvcRequestBuilders
                 .put(url, userBeingCreated)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .param("login", userNotExists)
                 .param("password", password1))
-                .andExpect(status().is(404));
+                .andExpect(status().is(415));
 
         //Launch request (New user's login already exists)
         mock.perform(MockMvcRequestBuilders
                 .put(url, userNotExists)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .param("login", anotherUserNotExists)
-                .param("password", password1))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"login\": \"" + anotherUserNotExists + "\", \"password\": \"" + password1 + "\"}"))
                 .andExpect(status().is(404));
 
         //Launch request (Missing argument)
         mock.perform(MockMvcRequestBuilders
                 .put(url, userNotExists)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(400));
     }
 
@@ -290,7 +272,7 @@ public class UserRestControllerTest {
 
         //Launch requests (Pass)
         mock.perform(MockMvcRequestBuilders
-                .delete(url, userNotExists))
+                .delete(url, userBeingCreated))
                 .andExpect(status().is(204));
         mock.perform(MockMvcRequestBuilders
                 .delete(url, anotherUserNotExists))
