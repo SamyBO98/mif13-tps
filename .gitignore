@@ -37,3 +37,6 @@ build/
 mvnw*
 
 out/
+
+### node_modules ###
+api/node_modules/
