@@ -1,6 +1,5 @@
 HELP.md
 target/
-node_modules
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -33,5 +32,8 @@ build/
 ### VS Code ###
 .vscode/
 
-# Dependency directories
-api/node_modules/
+.mvn/
+
+mvnw*
+
+out/
