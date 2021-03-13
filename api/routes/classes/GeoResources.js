@@ -9,5 +9,17 @@ class GeoResources {
         this.trophys = trophys;
     }
 
+    getId() {
+        return this.id;
+    }
+
+    updatePosition(tab2) {
+        this.position = tab2;
+    }
+
+    updateImageLocation(url) {
+        this.url = url;
+    }
+
 }
 module.exports.class = GeoResources

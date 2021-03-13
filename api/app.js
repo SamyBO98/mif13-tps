@@ -1,10 +1,11 @@
 
 const express = require('express')
+const bodyParser = require('body-parser')
 const app = express()
-const axios = require('axios')
 const port = 3376
 
-var token = ""
+// parse application/json
+app.use(bodyParser.json())
 
 // Router modules
 var api = require('./routes/api')
