@@ -7,8 +7,10 @@ var bodyParser = require('body-parser')
 // Call classes
 var geoResources = require('./classes/GeoResources')
 var latLng = require('./classes/LatLng')
-var Role = JSON.parse(fs.readFileSync('routes/classes/Roles.json', 'utf-8'))
 var Authenticate = JSON.parse(fs.readFileSync('routes/authenticate.json', 'utf-8'))
+
+// create application/json parser
+var jsonParser = bodyParser.json()
 
 // Call arrays & token (todo manually ^_^)
 var map = {};
@@ -17,32 +19,22 @@ var map = {};
 let id1 = "otman-le-rigolo"
 let url1 = "https://192.168.75.118/api/v1/users/otman-le-rigolo/avatar.png"
 let position1 = new latLng.class(10, 4).getLatLng()
-let role1 = Role.PLAYER
 let ttl1 = 67
 let trophys1 = ["truc", "oui"]
-let geo1 = new geoResources.class(id1, url1, position1, role1, ttl1, trophys1)
+let geo1 = new geoResources.class(id1, url1, position1, ttl1, trophys1)
 
 let id2 = "asterote"
 let url2 = "https://192.168.75.118/api/v1/users/asterote/avatar.png"
 let position2 = new latLng.class(2, 1).getLatLng()
-let role2 = Role.IMPACT
-let ttl2 = 89
-let trophys2 = ["tertoe"]
-let geo2 = new geoResources.class(id2, url2, position2, role2, ttl2, trophys2)
+let geo2 = new geoResources.class(id2, url2, position2, null, null)
 
 map[geo1.getId()] = geo1
 map[geo2.getId()] = geo2
 
 // Middleware that is specific to this router
 router.use(function timeLog (req, res, next) {
-    console.log('Time: ', Date.now())
     // Launch authenticate function
-    axios.get('https://proxy-tps-m1if13-2019.univ-lyon1.fr/118/v1/authenticate/', {
-        params: {
-            token: Authenticate.token,
-            Origin: Authenticate.origin
-        }
-    }).then(response => {
+    axios.get("https://proxy-tps-m1if13-2019.univ-lyon1.fr/118/v1/authenticate?origin=" + Authenticate.origin + "&token=" + Authenticate.token).then(response => {
         //next()
     }).catch(error => {
         //res.status(401).send('Authentication failed')
@@ -52,7 +44,7 @@ router.use(function timeLog (req, res, next) {
 
 // Get all living resources
 router.get('/', function (req, res) {
-    res.send('API home page')
+    res.render('pages/index')
 })
 
 // Define the resources route
@@ -61,7 +53,7 @@ router.get('/resources', function (req, res) {
 })
 
 // Update user's position
-router.put('/resources/:resourceId/position', function (req, res) {
+router.put('/resources/:resourceId/position', jsonParser, function (req, res) {
     let id = req.params.resourceId;
     let body = req.body.position;
 
@@ -87,7 +79,7 @@ router.put('/resources/:resourceId/position', function (req, res) {
 })
 
 // Update user's image
-router.put('/resources/:resourceId/image', function (req, res) {
+router.put('/resources/:resourceId/image', jsonParser, function (req, res) {
     //TODO CHANGE SOMETHING FOR URL OBJECT (MAYBE LAUNCH AN API OF AN EXISTING WEBSITE)
 
     let id = req.params.resourceId;

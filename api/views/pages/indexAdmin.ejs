@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head'); %>
+</head>
+<body class="container">
+
+<header>
+    <%- include('../partials/header'); %>
+</header>
+
+<main>
+    <div class="jumbotron">
+        <h1>Partie confidentielle</h1>
+        <p>Bienvenue dans la partie confidentielle de l'application (chut, ne dites rien à personne...)</p>
+        <p>Aucun routeur ne fonctionne ici mais ils sont accessibles pour avoir une idée de ce qu'il se produira d'ici sous peu...</p>
+        <ul>
+            Il y aura bientôt...
+            <li>La possibilité de <bold>créer une partie contenant en information un ZZR (4 positions) avec un ttl initial</bold> via l'URL "/admin/create" en POST</li>
+            <li>La possibilité de <bold>déclencher la chute d'une météorite d'un type donné</bold> via l'URL "/admin/:idPartie/meteorite" en POST</li>
+            <li>La possibilité de <bold>suivre la position et le ttl des joueurs</bold> via l'URL "/admin/:id/infos" en GET</li>
+            <li>La possibilité d'<bold>indiquer quand et par qui une météorite à été récupérée</bold> via l'URL "/admin/annonce" en POST</li>
+        </ul>
+    </div>
+</main>
+
+<footer>
+    <%- include('../partials/footer'); %>
+</footer>
+
+</body>
+</html>
