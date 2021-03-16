@@ -14,7 +14,7 @@ app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
 
-app.get('/', (req, res) => {
+app.get(__dirname + '/', (req, res) => {
   res.send('Hello World!')
 })
 

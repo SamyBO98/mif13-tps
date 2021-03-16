@@ -5,31 +5,31 @@ var fs = require('fs')
 var bodyParser = require('body-parser')
 
 // Call classes
-var geoResources = require('./classes/GeoResources')
-var latLng = require('./classes/LatLng')
+var geoResourcesClass = require('./classes/GeoResources')
+var latLngClass = require('./classes/LatLng')
+var userClass = require('./classes/User')
+var meteoriteClass = require('./classes/Meteorite')
 var Authenticate = JSON.parse(fs.readFileSync('routes/authenticate.json', 'utf-8'))
 
 // create application/json parser
 var jsonParser = bodyParser.json()
 
 // Call arrays & token (todo manually ^_^)
-var map = {};
+var geoResources = new geoResourcesClass.class()
 
-// Data mock objects
-let id1 = "otman-le-rigolo"
-let url1 = "https://192.168.75.118/api/v1/users/otman-le-rigolo/avatar.png"
-let position1 = new latLng.class(10, 4).getLatLng()
-let ttl1 = 67
-let trophys1 = ["truc", "oui"]
-let geo1 = new geoResources.class(id1, url1, position1, ttl1, trophys1)
-
-let id2 = "asterote"
-let url2 = "https://192.168.75.118/api/v1/users/asterote/avatar.png"
-let position2 = new latLng.class(2, 1).getLatLng()
-let geo2 = new geoResources.class(id2, url2, position2, null, null)
-
-map[geo1.getId()] = geo1
-map[geo2.getId()] = geo2
+// Create user & meteorite & push it to geoResourcesClass
+var user = new userClass.class(
+    "otman", 
+    "https://img-31.ccm2.net/gErGuHhHKhHj1dWOgTQZ087xi-E=/1240x/smart/0303393db20f42cfae31ed12d4fc2c0d/ccmcms-hugo/10601961.jpg", 
+    new latLngClass.class(4, 8),
+    180
+);
+var meteorite = new meteoriteClass.class(
+    new latLngClass.class(6, 10),
+    "Astra-X"
+);
+geoResources.add(user);
+geoResources.add(meteorite);
 
 // Middleware that is specific to this router
 router.use(function timeLog (req, res, next) {
@@ -44,12 +44,12 @@ router.use(function timeLog (req, res, next) {
 
 // Get all living resources
 router.get('/', function (req, res) {
-    res.render('pages/index')
+    res.send("Yo")
 })
 
 // Define the resources route
 router.get('/resources', function (req, res) {
-    res.send(map)
+    res.send(geoResources.getAll())
 })
 
 // Update user's position

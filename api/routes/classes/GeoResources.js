@@ -1,29 +1,17 @@
 class GeoResources {
 
-    constructor(id, url, position, ttl, trophys){
-        this.id = id;
-        this.url = url;
-        this.position = position;
-        if (ttl !== null){
-            this.role = "player";
-            this.ttl = ttl;
-            this.trophys = trophys;
-        } else {
-            this.role = "impact";
-        }
+    constructor(){
+        this.map = {};
+        this.size = 0;
     }
 
-    getId() {
-        return this.id;
+    add(resource){
+        this.map[this.size] = resource;
+        this.size++;
     }
 
-    updateImageLocation(url) {
-        this.url = url;
+    getAll(){
+        return this.map;
     }
 
-    updatePosition(tab2) {
-        this.position = tab2;
-    }
-
-}
-module.exports.class = GeoResources
+} module.exports.class = GeoResources

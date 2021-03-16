@@ -23,7 +23,7 @@ router.use(function timeLog (req, res, next) {
 })
 
 router.get('/', function (req, res) {
-    res.render('pages/indexAdmin')
+    res.render(geoMap.getAll())
 })
 
 // Create a game (post)
