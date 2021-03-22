@@ -5,7 +5,7 @@ var fs = require('fs')
 var bodyParser = require('body-parser')
 
 // Call classes
-var geoResourcesClass = require('./classes/GeoResources')
+var geoResources = require('./classes/GeoResources').class
 var latLngClass = require('./classes/LatLng')
 var userClass = require('./classes/User')
 var meteoriteClass = require('./classes/Meteorite')
@@ -13,9 +13,6 @@ var Authenticate = JSON.parse(fs.readFileSync('routes/authenticate.json', 'utf-8
 
 // create application/json parser
 var jsonParser = bodyParser.json()
-
-// Call arrays & token (todo manually ^_^)
-var geoResources = new geoResourcesClass.class()
 
 // Create user & meteorite & push it to geoResourcesClass
 var user = new userClass.class(
@@ -28,8 +25,8 @@ var meteorite = new meteoriteClass.class(
     new latLngClass.class(6, 10),
     "Astra-X"
 );
-geoResources.add(user);
-geoResources.add(meteorite);
+//geoResources.add(user);
+//geoResources.add(meteorite);
 
 // Middleware that is specific to this router
 router.use(function timeLog (req, res, next) {

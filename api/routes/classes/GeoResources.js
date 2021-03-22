@@ -1,16 +1,14 @@
 class GeoResources {
 
-    constructor(){
-        this.map = {};
-        this.size = 0;
-    }
+    static map = {};
+    static size = 0;
 
-    add(resource){
+    static add(resource){
         this.map[this.size] = resource;
         this.size++;
     }
 
-    getAll(){
+    static getAll(){
         return this.map;
     }
 
