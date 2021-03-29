@@ -8,6 +8,7 @@ var Authenticate = JSON.parse(fs.readFileSync('routes/authenticate.json', 'utf-8
 var userClass = require('./classes/User')
 var latLngClass = require('./classes/LatLng')
 var geoResources = require('./classes/GeoResources').class
+var zrr = require('./classes/Zrr').class
 
 // Middleware that is specific to this router
 router.use(function timeLog (req, res, next) {
@@ -39,12 +40,26 @@ router.get('/add', function(req, res) {
 })
 
 router.get('/', function (req, res) {
-    res.render(geoMap.getAll())
+    res.send(geoResources.getAll());
 })
 
-// Create a game (post)
+// Create a zrr
 router.post('/create', function (req, res) {
-    res.send('Page de création')
+    let lat1 = req.body.lat1;
+    let lon1 = req.body.lng1;
+    let lat2 = req.body.lat2;
+    let lon2 = req.body.lng2;
+    
+    let corner1 = new latLngClass.class(lat1, lon1);
+    let corner2 = new latLngClass.class(lat2, lon2);
+
+    zrr.add(corner1.getLatLng(), corner2.getLatLng());
+    res.status(204).send('Successful operation');
+})
+
+// Create a zrr
+router.get('/zrr', function (req, res) {
+    res.send(zrr.getAll());
 })
 
 // Create an impact (post)

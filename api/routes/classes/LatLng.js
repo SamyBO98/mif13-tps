@@ -9,5 +9,4 @@ class LatLng {
         return [this.lat, this.lng];
     }
 
-}
-module.exports.class = LatLng
+} module.exports.class = LatLng

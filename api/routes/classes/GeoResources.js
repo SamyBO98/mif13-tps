@@ -12,4 +12,8 @@ class GeoResources {
         return this.map;
     }
 
+    static getSize(){
+        return this.size;
+    }
+
 } module.exports.class = GeoResources

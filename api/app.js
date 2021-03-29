@@ -1,5 +1,6 @@
 
 const express = require('express')
+const bodyParser = require('body-parser')
 const app = express()
 const port = 3376
 
@@ -13,6 +14,12 @@ app.set('view engine', 'ejs')
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
+
+// Parse URL-encoded bodies (as sent by HTML forms)
+app.use(express.urlencoded());
+
+// Parse JSON bodies (as sent by API clients)
+app.use(express.json());
 
 app.get(__dirname + '/', (req, res) => {
   res.send('Hello World!')

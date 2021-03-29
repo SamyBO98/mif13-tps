@@ -60,10 +60,3 @@ function renderHtmlUser(user, ul){
     //append li to ul
     ul.appendChild(li);
 }
-
-```<li id="il-user-toto">
-<a href="javascript:updateImage('Toto');"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Pediculus_humanus_var_capitis.jpg/800px-Pediculus_humanus_var_capitis.jpg?uselang=fr" alt="Pediculus humanus var capitis AKA head louse; public domain from http://phil.cdc.gov/" class="icon"></a>&nbsp;&nbsp;-&nbsp;&nbsp;
-<a href="javascript:updateName('Toto');">Toto</a>&nbsp;&nbsp;-&nbsp;&nbsp;
-<strong>TTL</strong> : 180s&nbsp;&nbsp;-&nbsp;&nbsp;
-<strong>Trophys</strong> : none
-</li>```

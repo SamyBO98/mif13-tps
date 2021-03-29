@@ -6,6 +6,7 @@ var bodyParser = require('body-parser')
 
 // Call classes
 var geoResources = require('./classes/GeoResources').class
+var zrr = require('./classes/Zrr').class
 var latLngClass = require('./classes/LatLng')
 var userClass = require('./classes/User')
 var meteoriteClass = require('./classes/Meteorite')
@@ -25,8 +26,8 @@ var meteorite = new meteoriteClass.class(
     new latLngClass.class(6, 10),
     "Astra-X"
 );
-//geoResources.add(user);
-//geoResources.add(meteorite);
+geoResources.add(user);
+geoResources.add(meteorite);
 
 // Middleware that is specific to this router
 router.use(function timeLog (req, res, next) {

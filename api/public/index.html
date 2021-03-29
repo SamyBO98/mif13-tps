@@ -26,24 +26,39 @@
 			<div class="content">
 				<p><strong>TODO:</strong> modifier ce formulaire pour que les valeurs s'affichent dans le formulaire quand on clique sur la carte et que le bouton "Send" appelle la bonne fonctionnalité de votre serveur Express.</p>
 				<p>Appuyez sur "Set" pour sélectionner un point de la carte :</p>
-				<form id="setCorner1" onsubmit="return updateCorner1();" class="pure-form">
+				<form id="sendZrr" onsubmit="return sendZrr()" class="pure-form">
 					<fieldset>
-						<input type="submit" value="Set" class="pure-button pure-button-active">&nbsp;&nbsp;
+						<h3>Coordonnées 1</h3>
+						<h5>Coordonnées Nord-Ouest</h5>
 						<label for="lat1">Lattitude : </label> <input type="text" id="lat1" name="lat1">&nbsp;&nbsp;
 						<label for="lon1">Longitude : </label> <input type="text" id="lon1" name="lon1">
 					</fieldset>
-				</form>
-				<form id="setCorner2" onsubmit="return updateCorner2();" class="pure-form">
+
 					<fieldset>
-						<input type="submit" value="Set" class="pure-button pure-button-active">&nbsp;&nbsp;
+						<h3>Coordonnées 2</h3>
+						<h5>Coordonnées Nord-Est</h5>
 						<label for="lat2">Lattitude : </label> <input type="text" id="lat2" name="lat2">&nbsp;&nbsp;
 						<label for="lon2">Longitude : </label> <input type="text" id="lon2" name="lon2">
 					</fieldset>
-				</form>
-				<form id="sendZrr" onsubmit="return sendZrr();" class="pure-form">
+
 					<fieldset>
+						<h3>Coordonnées 3</h3>
+						<h5>Coordonnées Sud-Ouest</h5>
+						<label for="lat3">Lattitude : </label> <input type="text" id="lat2" name="lat2">&nbsp;&nbsp;
+						<label for="lon3">Longitude : </label> <input type="text" id="lon2" name="lon2">
+					</fieldset>
+
+					<fieldset>
+						<h3>Coordonnées 4</h3>
+						<h5>Coordonnées Sud-Est</h5>
+						<label for="lat4">Lattitude : </label> <input type="text" id="lat2" name="lat2">&nbsp;&nbsp;
+						<label for="lon4">Longitude : </label> <input type="text" id="lon2" name="lon2">
+					</fieldset>
+				
+					<fieldset>
+						<h3>Création d'une ZRR</h3>
 						<label for="sendZrr">Valider la position de la ZRR : </label>&nbsp;&nbsp;
-						<input type="submit" name="sendZrr" value="Send" class="pure-button pure-button-active">
+						<input type="submit" name="sendZrr" value="Créer la ZRR" class="pure-button pure-button-active">
 					</fieldset>
 				</form>
 			</div>

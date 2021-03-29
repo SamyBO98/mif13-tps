@@ -1,26 +1,19 @@
 class Zrr {
 
-    constructor(no, ne, se, so){
-        this.no = no;
-        this.ne = ne;
-        this.se = se;
-        this.so = so;
+    static map = {};
+    static size = 0;
+
+    static add(corner1, corner2) {
+        this.map[this.size] = { corner1: corner1, corner2: corner2 };
+        this.size++;
     }
 
-    getNo(){
-        return this.no;
+    static getAll() {
+        return this.map;
     }
 
-    getNe(){
-        return this.ne;
-    }
-
-    getSe(){
-        return this.se;
-    }
-
-    getSo(){
-        return this.so;
+    static getSize() {
+        return this.size;
     }
 
 } module.exports.class = Zrr
