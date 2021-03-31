@@ -1,30 +1,46 @@
 /**
- * Chargement de la liste des utilisateurs existants
+ * Chargement de la liste des utilisateurs et météorites existants
  */
-let url = "http://localhost:3376/api/resources";
-let init = {
-    method: 'GET',
-    headers: { 'Accept': 'application/json' },
-    mode: 'cors',
-    cache: 'default'
-};
-let request = new Request(url)
+function updateMapAndUser() {
+    let url = "http://localhost:3376/api/resources";
+    let init = {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        mode: 'cors',
+        cache: 'default'
+    };
+    let request = new Request(url)
 
-fetch(request, init)
-    .then(resp => resp.json())
-    .then(user => {
-        var ul = document.getElementById("ul-users");
+    fetch(request, init)
+        .then(resp => resp.json())
+        .then(user => {
+            var ul = document.getElementById("ul-users");
 
-        for (const id of Object.keys(user)){
-            if (user[id].role === "player"){
-                renderHtmlUser(user[id], ul);
+            for (const id of Object.keys(user)) {
+                if (user[id].role === "player") {
+                    renderHtmlUser(user[id], ul);
+                    //marker for players
+                    L.marker([user[id].position[0], user[id].position[1]], { icon: greenIcon })
+                        .addTo(mymap)
+                        .bindPopup(`Utilisateur <strong>${user[id].login}</strong><br>TTL restant: <strong>${user[id].ttl}</strong>s.`);
+
+                    console.log(`Login: ${user[id].login}, ttl: ${user[id].ttl}, position: [${user[id].position[0]}, ${user[id].position[1]}]`);
+                } else {
+                    //marker for impacts
+                    L.marker([user[id].position[0], user[id].position[1]], { icon: orangeIcon })
+                        .addTo(mymap)
+                        .bindPopup(`Météorite de type <strong>${user[id].composition}</strong>.<br>TTL restant: <strong>${user[id].ttl}</strong>s.`);
+
+
+                    console.log(`Composition: ${user[id].composition}, position: [${user[id].position[0]}, ${user[id].position[1]}]`);
+                }
             }
-        }
-    }).catch(error => {
-        console.log(error);
-    })
+        }).catch(error => {
+            console.log(error);
+        })
+}
 
-function renderHtmlUser(user, ul){
+function renderHtmlUser(user, ul) {
     //li
     var li = document.createElement("li");
     li.setAttribute("id", "li-user-" + user.login);
@@ -56,7 +72,7 @@ function renderHtmlUser(user, ul){
     var trophys = document.createElement("strong");
     trophys.appendChild(document.createTextNode("Trophys: " + user.trophys));
     li.appendChild(trophys);
-    
+
     //append li to ul
     ul.appendChild(li);
 }

@@ -15,16 +15,17 @@ var Authenticate = JSON.parse(fs.readFileSync('routes/authenticate.json', 'utf-8
 // create application/json parser
 var jsonParser = bodyParser.json()
 
-// Create user & meteorite & push it to geoResourcesClass
+// MOCK OBJECTS
 var user = new userClass.class(
     "otman", 
     "https://img-31.ccm2.net/gErGuHhHKhHj1dWOgTQZ087xi-E=/1240x/smart/0303393db20f42cfae31ed12d4fc2c0d/ccmcms-hugo/10601961.jpg", 
-    new latLngClass.class(4, 8),
+    new latLngClass.class(45.784, 4.8659).getLatLng(),
     180
 );
 var meteorite = new meteoriteClass.class(
-    new latLngClass.class(6, 10),
-    "Astra-X"
+    new latLngClass.class(45.780, 4.8660).getLatLng(),
+    "Astra-X",
+    50
 );
 geoResources.add(user);
 geoResources.add(meteorite);

@@ -1,119 +1,125 @@
 <!doctype html>
 <html lang="fr">
-    <head>
-		<meta charset="UTF-8">
-        <title>Solid Rain - Confidential</title>
-		<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
-        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="css/style.css"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-    </head>
-    <body>
-		<header>
-			<h1>Solid Rain <span class="xirod">Confidential</span></h1>
-		</header>
 
-		<section>
-			<h2>Carte</h2>
-			<p class="content"><strong>TODO :</strong> mettre à jour les positions des différents objets sur la carte.</p>
-			<div id="map"></div>
-		</section>
+<head>
+	<meta charset="UTF-8">
+	<title>Solid Rain - Confidential</title>
+	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css"
+		integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+		integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+		crossorigin="" />
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+		integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+		crossorigin=""></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="css/style.css" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
 
-		<section>
-			<h2>ZRR</h2>
-			<div class="content">
-				<p><strong>TODO:</strong> modifier ce formulaire pour que les valeurs s'affichent dans le formulaire quand on clique sur la carte et que le bouton "Send" appelle la bonne fonctionnalité de votre serveur Express.</p>
-				<p>Appuyez sur "Set" pour sélectionner un point de la carte :</p>
-				<form id="sendZrr" onsubmit="return sendZrr()" class="pure-form">
-					<fieldset>
-						<h3>Coordonnées 1</h3>
-						<h5>Coordonnées Nord-Ouest</h5>
-						<label for="lat1">Lattitude : </label> <input type="text" id="lat1" name="lat1">&nbsp;&nbsp;
-						<label for="lon1">Longitude : </label> <input type="text" id="lon1" name="lon1">
-					</fieldset>
+<body onload="getParameters()">
+	<header>
+		<h1>Solid Rain <span class="xirod">Confidential</span></h1>
+	</header>
 
-					<fieldset>
-						<h3>Coordonnées 2</h3>
-						<h5>Coordonnées Nord-Est</h5>
-						<label for="lat2">Lattitude : </label> <input type="text" id="lat2" name="lat2">&nbsp;&nbsp;
-						<label for="lon2">Longitude : </label> <input type="text" id="lon2" name="lon2">
-					</fieldset>
+	<section>
+		<h2>Carte</h2>
+		<p class="content"><strong>TODO :</strong> mettre à jour les positions des différents objets sur la carte.</p>
+		<div id="map"></div>
+	</section>
 
-					<fieldset>
-						<h3>Coordonnées 3</h3>
-						<h5>Coordonnées Sud-Ouest</h5>
-						<label for="lat3">Lattitude : </label> <input type="text" id="lat2" name="lat2">&nbsp;&nbsp;
-						<label for="lon3">Longitude : </label> <input type="text" id="lon2" name="lon2">
-					</fieldset>
+	<section>
+		<h2>ZRR</h2>
+		<div class="content">
+			<p><strong>TODO:</strong> modifier ce formulaire pour que les valeurs s'affichent dans le formulaire quand
+				on clique sur la carte et que le bouton "Send" appelle la bonne fonctionnalité de votre serveur Express.
+			</p>
+			<p>Appuyez sur "Set" pour sélectionner un point de la carte :</p>
+			<form id="sendZrr" class="pure-form">
+				<fieldset>
+					<h3>Coordonnées 1</h3>
+					<h5>Premier coin</h5>
+					<label for="lat1">Lattitude : </label> <input type="text" id="lat1" name="lat1">&nbsp;&nbsp;
+					<label for="lon1">Longitude : </label> <input type="text" id="lon1" name="lon1">
+				</fieldset>
 
-					<fieldset>
-						<h3>Coordonnées 4</h3>
-						<h5>Coordonnées Sud-Est</h5>
-						<label for="lat4">Lattitude : </label> <input type="text" id="lat2" name="lat2">&nbsp;&nbsp;
-						<label for="lon4">Longitude : </label> <input type="text" id="lon2" name="lon2">
-					</fieldset>
-				
-					<fieldset>
-						<h3>Création d'une ZRR</h3>
-						<label for="sendZrr">Valider la position de la ZRR : </label>&nbsp;&nbsp;
-						<input type="submit" name="sendZrr" value="Créer la ZRR" class="pure-button pure-button-active">
-					</fieldset>
-				</form>
-			</div>
-		</section>
+				<fieldset>
+					<h3>Coordonnées 2</h3>
+					<h5>Second coin</h5>
+					<label for="lat2">Lattitude : </label> <input type="text" id="lat2" name="lat2">&nbsp;&nbsp;
+					<label for="lon2">Longitude : </label> <input type="text" id="lon2" name="lon2">
+				</fieldset>
 
-		<section>
-			<h2>Paramètres</h2>
-			<div class="content">
-				<p><strong>TODO:</strong> Mettre en place les scripts nécessaires au fonctionnement de l'interface et à l'appel de l'API du jeu.</p>
-				<form id="setTtl" onsubmit="return setTtl();" class="pure-form">
-					<fieldset>
-						<label for="ttl">Temps de Tranquillité et de Liberté (TTL) par défaut : </label> <input type="number" min="0" max="180" value="60" id="ttl" name="ttl">&nbsp;&nbsp;
-						<input type="submit" name="setTtl" value="Set" class="pure-button pure-button-active">
-					</fieldset>
-				</form>
-				<form id="setMeteorType" onsubmit="return sendMeteor();" class="pure-form">
-					<fieldset>
-						<label for="meteorType">Type de météorite : </label> <select name="meteorType" id="pet-select">
-						    <option value="Astra-Z" selected>Astra-Z</option>
-						    <option value="Astra-X">Astra-X</option>
-						    <option value="Bêta-X">Bêta-X</option>
-						</select>
-						<br>
-						<label for="sendMeteor">Passer en mode de déclenchement d'impact (démarre le jeu) : </label> 
-						<input type="submit" name="sendMeteor" value="Feu!" class="pure-button pure-button-active">
-					</fieldset>
-				</form>
-			</div>
-		</section>
+				<fieldset>
+					<h3>Création d'une ZRR</h3>
+					<label for="sendZrr">Valider la position de la ZRR : </label>&nbsp;&nbsp;
+					<input type="submit" name="sendZrr" value="Création d'une ZRR" class="pure-button pure-button-active">
+				</fieldset>
+			</form>
+		</div>
+	</section>
 
-		<section>
-			<h2>Utilisateurs</h2>
-			<div class="content">
-				<p><strong>TODO:</strong> placer ici la liste des utilisateurs et les liens pour les modifier. Exemple :</p>
-				<ul id="ul-users">
+	<section>
+		<h2>Paramètres du lancement d'une météorite</h2>
+		<div class="content">
+			<form id="sendMeteor" class="pure-form">
+				<fieldset>
+					<label for="ttl">Temps de Tranquillité et de Liberté (TTL) par défaut : </label> <input
+						type="number" min="0" max="180" value="60" id="ttlMeteor" name="ttlMeteor">&nbsp;&nbsp;
+					<input type="submit" name="ttlMeteor" value="Set" class="pure-button pure-button-active">
+				</fieldset>
+				<fieldset>
+					<label for="type">Type de météorite : </label> <select name="meteorType" id="meteorType">
+						<option value="Astra-Z" selected>Astra-Z</option>
+						<option value="Astra-X">Astra-X</option>
+						<option value="Bêta-X">Bêta-X</option>
+					</select>
+					<br>
+				</fieldset>
+
+				<fieldset>
+					<h3>Coordonnées de la météorite</h3>
+					<label for="lat">Lattitude : </label> <input type="text" id="latMeteor" name="latMeteor">&nbsp;&nbsp;
+					<label for="lon">Longitude : </label> <input type="text" id="lonMeteor" name="lonMeteor">
+				</fieldset>
+
+				<label for="sendMeteor">Passer en mode de déclenchement d'impact (démarre le jeu) : </label>
+				<input type="submit" name="sendMeteor" value="Feu!" class="pure-button pure-button-active">
+			</form>
+		</div>
+	</section>
+
+	<section>
+		<h2>Utilisateurs</h2>
+		<div class="content">
+			<p><strong>TODO:</strong> placer ici la liste des utilisateurs et les liens pour les modifier. Exemple :</p>
+			<ul id="ul-users">
 					<!-- 
 						USERS LIST: DONE
 					-->
-					<li id="il-user-toto">
-						<a href="javascript:updateImage('Toto');"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Pediculus_humanus_var_capitis.jpg/800px-Pediculus_humanus_var_capitis.jpg?uselang=fr" alt="Pediculus humanus var capitis AKA head louse; public domain from http://phil.cdc.gov/" class="icon"></a>&nbsp;&nbsp;-&nbsp;&nbsp;
-						<a href="javascript:updateName('Toto');">Toto</a>&nbsp;&nbsp;-&nbsp;&nbsp;
-						<strong>TTL</strong> : 180s&nbsp;&nbsp;-&nbsp;&nbsp;
-						<strong>Trophys</strong> : none
-					</li>
-				</ul>
-				<form id="addUser" onsubmit="return sendMeteor();" class="pure-form">
-					<fieldset>
-						<label for="addUser">Ajouter un utilisateur : </label> 
-						<input type="submit" name="addUser" value="Add" class="pure-button pure-button-active">
-					</fieldset>
-				</form>
-			</div>
-		</section>
+				<li id="il-user-toto">
+					<a href="javascript:updateImage('Toto');"><img
+							src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Pediculus_humanus_var_capitis.jpg/800px-Pediculus_humanus_var_capitis.jpg?uselang=fr"
+							alt="Pediculus humanus var capitis AKA head louse; public domain from http://phil.cdc.gov/"
+							class="icon"></a>&nbsp;&nbsp;-&nbsp;&nbsp;
+					<a href="javascript:updateName('Toto');">Toto</a>&nbsp;&nbsp;-&nbsp;&nbsp;
+					<strong>TTL</strong> : 180s&nbsp;&nbsp;-&nbsp;&nbsp;
+					<strong>Trophys</strong> : none
+				</li>
+			</ul>
+			<form id="addUser" class="pure-form">
+				<fieldset>
+					<label for="addUser">Ajouter un utilisateur : </label>
+					<input type="submit" name="addUser" value="Add" class="pure-button pure-button-active">
+				</fieldset>
+			</form>
+		</div>
+	</section>
+	<script src="./js/parameters.js"></script>
+	<script src="./js/map.js"></script>
 	<script src="./js/user.js"></script>
-    <script src="./js/map.js"></script>
-    <script src="./js/form.js"></script>
-  </body>
+	<script src="./js/form.js"></script>
+</body>
+
 </html>

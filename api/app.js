@@ -34,7 +34,6 @@ app.use('/api', api)
 //router admin
 app.use('/admin', admin)
 
-
 // 404 error pages
 app.use(function (req, res, next) {
     res.status(404).send("This page does not exists")

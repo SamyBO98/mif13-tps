@@ -1,10 +1,27 @@
 // initialisation de la map
 let lat = 45.782, lng = 4.8656, zoom = 20;
-let lat1 = null, lng1 = null, lat2 = null, lng2 = null;
-let coord1 = null, coord2 = null;
+let lat1 = null, lng1 = null, lat2 = null, lng2 = null
+
+var redIcon = new L.Icon({
+	iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+	shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+});
 
 var greenIcon = new L.Icon({
-	iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+	iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+	shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+});
+
+var orangeIcon = new L.Icon({
+	iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
 	shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
 	iconSize: [25, 41],
 	iconAnchor: [12, 41],
@@ -16,7 +33,6 @@ let mymap = L.map('map', {
 	center: [lat, lng],
 	zoom: zoom
 });
-//updateMap();
 
 // Création d'un "tile layer" (permet l'affichage sur la carte)
 L.tileLayer('https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.jpg90?access_token=pk.eyJ1IjoibTFpZjEzIiwiYSI6ImNqczBubmhyajFnMnY0YWx4c2FwMmRtbm4ifQ.O6W7HeTW3UvOVgjCiPrdsA', {
@@ -42,66 +58,44 @@ mymap.on('click', e => {
 	if (lat1 == null && lng1 == null) {
 		lat1 = e.latlng.lat;
 		lng1 = e.latlng.lng;
-		coord1 = L.marker([lat1, lng1], { icon: greenIcon });
+		coord1 = L.marker([lat1, lng1], { icon: redIcon });
 		coord1.addTo(mymap);
-	} else {
+		$("#lat1").val(lat1);
+		$("#lon1").val(lng1);
+	} else if (lat2 == null && lng2 == null) {
 		lat2 = e.latlng.lat;
 		lng2 = e.latlng.lng;
-		coord2 = L.marker([lat2, lng2], { icon: greenIcon });
+		coord2 = L.marker([lat2, lng2], { icon: redIcon });
 		coord2.addTo(mymap);
-		createZrr();
+		$("#lat2").val(lat2);
+		$("#lon2").val(lng2);
+	} else {
 		lat1 = null;
 		lng1 = null;
 		lat2 = null;
 		lng2 = null;
+		coord1.remove(mymap);
+		coord2.remove(mymap);
+		$("#lat1").val("");
+		$("#lon1").val("");
+		$("#lat2").val("");
+		$("#lon2").val("");
 	}
 
 	lat = e.latlng.lat;
 	lng = e.latlng.lng;
+	$("#latMeteor").val(lat);
+	$("#lonMeteor").val(lng);
 	updateMap();
 });
 
 // Mise à jour de la map
 function updateMap() {
 	// Affichage à la nouvelle position
-	mymap.setView([lat, lng], zoom);
+	mymap.setView([lat, lng]);
 
 	// La fonction de validation du formulaire renvoie false pour bloquer le rechargement de la page.
 	return false;
-}
-
-// Création d'une zrr côté serveur
-function createZrr() {
-	let url = `http://localhost:3376/admin/create`;
-
-	let datas = {
-		lat1: lat1,
-		lng1: lng1,
-		lat2: lat2,
-		lng2: lng2
-	};
-
-	const co1 = coord1;
-	const co2 = coord2;
-
-	let init = {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		mode: 'cors',
-		cache: 'default',
-		body: JSON.stringify(datas)
-	};
-
-	let request = new Request(url)
-
-	fetch(request, init)
-		.then(resp => {
-			L.rectangle([[datas.lat1, datas.lng1], [datas.lat2, datas.lng2]], { color: '#FF0000', weight: 1 }).addTo(mymap);
-			co1.remove();
-			co2.remove();
-		}).catch(error => {
-			console.log(error);
-		})
 }
 
 function getAllZrr() {

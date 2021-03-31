@@ -7,11 +7,12 @@ var fs = require('fs')
 var Authenticate = JSON.parse(fs.readFileSync('routes/authenticate.json', 'utf-8'))
 var userClass = require('./classes/User')
 var latLngClass = require('./classes/LatLng')
+var meteoriteClass = require('./classes/Meteorite')
 var geoResources = require('./classes/GeoResources').class
 var zrr = require('./classes/Zrr').class
 
 // Middleware that is specific to this router
-router.use(function timeLog (req, res, next) {
+router.use(function timeLog(req, res, next) {
     // Launch authenticate function
     axios.get('https://proxy-tps-m1if13-2019.univ-lyon1.fr/118/v1/authenticate', {
         params: {
@@ -26,30 +27,23 @@ router.use(function timeLog (req, res, next) {
     next()
 })
 
-router.get('/add', function(req, res) {
-
-    var user = new userClass.class(
-        "otman", 
-        "https://img-31.ccm2.net/gErGuHhHKhHj1dWOgTQZ087xi-E=/1240x/smart/0303393db20f42cfae31ed12d4fc2c0d/ccmcms-hugo/10601961.jpg", 
-        new latLngClass.class(4, 8),
-        180
-    );
-
-    geoResources.add(user);
-    res.send(200);
-})
-
 router.get('/', function (req, res) {
     res.send(geoResources.getAll());
 })
 
+
 // Create a zrr
-router.post('/create', function (req, res) {
+router.get('/zrr', function (req, res) {
+    res.send(zrr.getAll());
+})
+
+// Create a zrr
+router.post('/zrr', function (req, res) {
     let lat1 = req.body.lat1;
     let lon1 = req.body.lng1;
     let lat2 = req.body.lat2;
     let lon2 = req.body.lng2;
-    
+
     let corner1 = new latLngClass.class(lat1, lon1);
     let corner2 = new latLngClass.class(lat2, lon2);
 
@@ -57,14 +51,23 @@ router.post('/create', function (req, res) {
     res.status(204).send('Successful operation');
 })
 
-// Create a zrr
-router.get('/zrr', function (req, res) {
-    res.send(zrr.getAll());
-})
 
-// Create an impact (post)
-router.post('/:idGame/meteorite', function (req, res) {
-    res.send('Meteorite')
+// Create an impact
+router.post('/impact', function (req, res) {
+    let lat = req.body.lat;
+    let lng = req.body.lng;
+    let type = req.body.type;
+    let ttl = req.body.ttl;
+
+    let meteorite = new meteoriteClass.class(
+        new latLngClass.class(lat, lng).getLatLng(),
+        type,
+        ttl
+    );
+
+    geoResources.add(meteorite);
+
+    res.status(204).send('Successful operation');
 })
 
 // Create a game (post)
@@ -73,7 +76,7 @@ router.get('/:idresources/infos', function (req, res) {
 })
 
 // Create a game (post)
-router.post('/annonce', function (req, res) {
+router.post('/announce', function (req, res) {
     res.send('Annonce')
 })
 
