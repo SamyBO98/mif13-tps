@@ -3,13 +3,15 @@
  */
 function updateMapAndUser() {
     let url = "http://localhost:3376/api/resources";
+
     let init = {
         method: 'GET',
         headers: { 'Accept': 'application/json' },
         mode: 'cors',
         cache: 'default'
     };
-    let request = new Request(url)
+
+    let request = new Request(url);
 
     fetch(request, init)
         .then(resp => resp.json())

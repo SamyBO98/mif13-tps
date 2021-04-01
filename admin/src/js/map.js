@@ -50,7 +50,6 @@ L.tileLayer('https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.jpg90?acc
 // Ajout d'un marker
 L.marker([45.78207, 4.86559]).addTo(mymap).bindPopup('Entrée du bâtiment<br><strong>Nautibus</strong>.').openPopup();
 
-// En cas de rechargement: récupération des zrr existants
 getAllZrr();
 
 // Clic sur la carte
@@ -104,8 +103,7 @@ function getAllZrr() {
 	let init = {
 		method: 'GET',
 		headers: { 'Accept': 'application/json' },
-		mode: 'cors',
-		cache: 'default'
+		mode: 'cors'
 	};
 	let request = new Request(url)
 

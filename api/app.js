@@ -1,12 +1,16 @@
 
 const express = require('express')
 const bodyParser = require('body-parser')
+var cors = require('cors');
 const app = express()
 const port = 3376
 
 // Router modules
 var api = require('./routes/api')
 var admin = require('./routes/admin')
+
+// cors
+app.use(cors());
 
 // ejs
 app.set('view engine', 'ejs')
@@ -24,9 +28,6 @@ app.use(express.json());
 app.get(__dirname + '/', (req, res) => {
   res.send('Hello World!')
 })
-
-// Static functions in public folder
-app.use('/static', express.static('public'))
 
 //router api
 app.use('/api', api)
