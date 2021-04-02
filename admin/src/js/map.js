@@ -54,6 +54,13 @@ getAllZrr();
 
 // Clic sur la carte
 mymap.on('click', e => {
+	lat = e.latlng.lat;
+	lng = e.latlng.lng;
+	$("#latMeteor").val(lat);
+	$("#lonMeteor").val(lng);
+	$("#latPlayer").val(lat);
+	$("#lonPlayer").val(lng);
+
 	if (lat1 == null && lng1 == null) {
 		lat1 = e.latlng.lat;
 		lng1 = e.latlng.lng;
@@ -79,12 +86,12 @@ mymap.on('click', e => {
 		$("#lon1").val("");
 		$("#lat2").val("");
 		$("#lon2").val("");
+		$("#latMeteor").val("");
+		$("#lonMeteor").val("");
+		$("#latPlayer").val("");
+		$("#lonPlayer").val("");
 	}
 
-	lat = e.latlng.lat;
-	lng = e.latlng.lng;
-	$("#latMeteor").val(lat);
-	$("#lonMeteor").val(lng);
 	updateMap();
 });
 
@@ -97,13 +104,15 @@ function updateMap() {
 	return false;
 }
 
+// Set ZRR on the map
 function getAllZrr() {
 	let url = "http://localhost:3376/admin/zrr";
 
 	let init = {
 		method: 'GET',
 		headers: { 'Accept': 'application/json' },
-		mode: 'cors'
+		mode: 'cors',
+        cache: 'default'
 	};
 	let request = new Request(url)
 

@@ -16,6 +16,20 @@ var getUrlParameter = function getUrlParameter(sParam) {
     }
 };
 
+
+/**
+ * Function called each time the page is loaded: get parameters from the url
+ */
+function getParameters(){
+
+	launchRequests.then(() => {
+		getAllZrr();
+		getAllPlayers();
+		getAllImpacts();
+	});
+
+}
+
 // Promise
 const launchRequests = new Promise((res, rej) => {
 	// Send meteorite
@@ -33,24 +47,19 @@ const launchRequests = new Promise((res, rej) => {
 				res();
 			});
 	} 
-	
-	else {
+
+	// Create player
+	else if (getUrlParameter('addUser') !== undefined){
+		createUser(getUrlParameter('loginPlayer'), getUrlParameter('imagePlayer'), getUrlParameter('latPlayer'), getUrlParameter('lonPlayer'), getUrlParameter('ttlPlayer'))
+			.then(() => {
+				res();
+			});
+
+	} else {
 		res();
 	}
 
 });
-
-/**
- * Function called each time the page is loaded: get parameters from the url
- */
-function getParameters(){
-
-	launchRequests.then(() => {
-		getAllZrr();
-		updateMapAndUser();
-	});
-
-}
 
 function sendMeteorite(lat, lon, type, ttl){
 
@@ -76,8 +85,6 @@ function sendMeteorite(lat, lon, type, ttl){
 	
 		fetch(request, init)
 			.then(() => {
-				res(true);
-			}).catch(() => {
 				res(true);
 			});
 	});
@@ -109,7 +116,36 @@ function createZrr(lat1, lon1, lat2, lon2){
 		fetch(request, init)
 			.then(() => {
 				res(true);
-			}).catch(() => {
+			});
+	});
+	
+}
+
+function createUser(login, image, lat, lon, ttl){
+
+	return new Promise(function(res, rej){
+		let url = `http://localhost:3376/admin/player`;
+
+		let datas = {
+			login: login,
+			imageUrl: image,
+			lat: lat,
+			lng: lon,
+			ttl: ttl
+		};
+	
+		let init = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			mode: 'cors',
+			cache: 'default',
+			body: JSON.stringify(datas)
+		};
+	
+		let request = new Request(url)
+	
+		fetch(request, init)
+			.then(() => {
 				res(true);
 			});
 	});

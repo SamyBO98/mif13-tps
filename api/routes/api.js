@@ -16,6 +16,7 @@ var Authenticate = JSON.parse(fs.readFileSync('routes/authenticate.json', 'utf-8
 var jsonParser = bodyParser.json()
 
 // MOCK OBJECTS
+/*
 var user = new userClass.class(
     "otman", 
     "https://img-31.ccm2.net/gErGuHhHKhHj1dWOgTQZ087xi-E=/1240x/smart/0303393db20f42cfae31ed12d4fc2c0d/ccmcms-hugo/10601961.jpg", 
@@ -29,6 +30,7 @@ var meteorite = new meteoriteClass.class(
 );
 geoResources.add(user);
 geoResources.add(meteorite);
+*/
 
 // Middleware that is specific to this router
 router.use(function timeLog (req, res, next) {
@@ -46,9 +48,37 @@ router.get('/', function (req, res) {
     res.send("Yo")
 })
 
-// Define the resources route
+// Get all resources
 router.get('/resources', function (req, res) {
     res.send(geoResources.getAll())
+})
+
+// Get all players from resources
+router.get('/resources/users', function (req, res) {
+    let users = {};
+    let index = 0;
+    let datas = geoResources.getAll();
+    for (const id of Object.keys(datas)){
+        if (datas[id].role === "player"){
+            users[index] = datas[id];
+            index++;
+        }
+    }
+    res.send(users);
+})
+
+// Get all impacts from resources
+router.get('/resources/impacts', function (req, res) {
+    let impacts = {};
+    let index = 0;
+    let datas = geoResources.getAll();
+    for (const id of Object.keys(datas)){
+        if (datas[id].role === "impact"){
+            impacts[index] = datas[id];
+            index++;
+        }
+    }
+    res.send(impacts);
 })
 
 // Update user's position

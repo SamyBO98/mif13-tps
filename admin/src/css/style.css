@@ -68,3 +68,10 @@ input, input[type=submit], select {
 	border-radius: 50%;
 	opacity: 50%;
 }
+
+.errorMessage {
+	color: red;
+	border: 1px solid;
+	padding: 5px;
+	width: 100%;
+}

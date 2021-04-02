@@ -39,35 +39,127 @@ router.get('/zrr', function (req, res) {
 
 // Create a zrr
 router.post('/zrr', function (req, res) {
-    let lat1 = req.body.lat1;
-    let lon1 = req.body.lng1;
-    let lat2 = req.body.lat2;
-    let lon2 = req.body.lng2;
+    let lat1 = 1.0 * req.body.lat1;
+    let lon1 = 1.0 * req.body.lng1;
+    let lat2 = 1.0 * req.body.lat2;
+    let lon2 = 1.0 * req.body.lng2;
+
+    // Check if missing argument
+    if (lat1 === undefined || lat1 === null){
+        res.status(400).send("Missing argument");
+        return;
+    }
+    if (lon1 === undefined || lon1 === null){
+        res.status(400).send("Missing argument");
+        return;
+    }
+    if (lat2 === undefined || lat2 === null){
+        res.status(400).send("Missing argument");
+        return;
+    }
+    if (lon2 === undefined || lon2 === null){
+        res.status(400).send("Missing argument");
+        return;
+    }
 
     let corner1 = new latLngClass.class(lat1, lon1);
     let corner2 = new latLngClass.class(lat2, lon2);
 
     zrr.add(corner1.getLatLng(), corner2.getLatLng());
-    res.status(204).send('Successful operation');
+
+    res.status(204).send("Successful operation");
 })
 
 
 // Create an impact
 router.post('/impact', function (req, res) {
-    let lat = req.body.lat;
-    let lng = req.body.lng;
-    let type = req.body.type;
-    let ttl = req.body.ttl;
+    let lat = 1.0 * req.body.lat;
+    let lng = 1.0 * req.body.lng;
+    let type = String(req.body.type);
+    let ttl = 1 * req.body.ttl;
+
+    // Check if missing argument
+    if (lng === undefined || lng === null){
+        res.status(400).send("Missing argument");
+        return;
+    }
+    if (lat === undefined || lat === null){
+        res.status(400).send("Missing argument");
+        return;
+    }
+    if (type === undefined || type === null){
+        res.status(400).send("Missing argument");
+        return;
+    }
+    if (ttl === undefined || ttl === null){
+        res.status(400).send("Missing argument");
+        return;
+    }
 
     let meteorite = new meteoriteClass.class(
         new latLngClass.class(lat, lng).getLatLng(),
         type,
         ttl
     );
-
+    
     geoResources.add(meteorite);
 
-    res.status(204).send('Successful operation');
+    res.status(204).send("Succesfull operation");
+})
+
+// Add existing player
+router.post('/player', function (req, res) {
+    let login = String(req.body.login);
+    let imageUrl = String(req.body.imageUrl);
+    let lat = 1.0 * req.body.lat;
+    let lng = 1.0 * req.body.lng;
+    let ttl = 1 * req.body.ttl;
+
+    // Check if missing argument
+    if (login === undefined || login === null){
+        res.status(400).send("Missing argument");
+        return;
+    }
+    if (imageUrl === undefined || imageUrl === null){
+        res.status(400).send("Missing argument");
+        return;
+    }
+    if (lat === undefined || lat === null){
+        res.status(400).send("Missing argument");
+        return;
+    }
+    if (lng === undefined || lng === null){
+        res.status(400).send("Missing argument");
+        return;
+    }
+    if (ttl === undefined || ttl === null){
+        res.status(400).send("Missing argument");
+        return;
+    }
+
+    //TODO after: launch request for spring to get all users and check if this one exists
+    //
+
+    // Check if user already exists
+    let datas = geoResources.getAll();
+    for (const id of Object.keys(datas)) {
+        if (datas[id].role === "player" && datas[id].login === login) {
+            res.status(409).send("User already exists");
+            return;
+        }
+    }
+
+    // Create player
+    let player = new userClass.class(
+        login,
+        imageUrl,
+        new latLngClass.class(lat, lng).getLatLng(),
+        ttl
+    );
+
+    geoResources.add(player);
+
+    res.status(204).send("Succesfull operation");
 })
 
 // Create a game (post)
