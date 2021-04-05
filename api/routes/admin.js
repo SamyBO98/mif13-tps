@@ -39,10 +39,10 @@ router.get('/zrr', function (req, res) {
 
 // Create a zrr
 router.post('/zrr', function (req, res) {
-    let lat1 = 1.0 * req.body.lat1;
-    let lon1 = 1.0 * req.body.lng1;
-    let lat2 = 1.0 * req.body.lat2;
-    let lon2 = 1.0 * req.body.lng2;
+    let lat1 = req.body.lat1;
+    let lon1 = req.body.lng1;
+    let lat2 = req.body.lat2;
+    let lon2 = req.body.lng2;
 
     // Check if missing argument
     if (lat1 === undefined || lat1 === null){
@@ -62,8 +62,8 @@ router.post('/zrr', function (req, res) {
         return;
     }
 
-    let corner1 = new latLngClass.class(lat1, lon1);
-    let corner2 = new latLngClass.class(lat2, lon2);
+    let corner1 = new latLngClass.class(1.0 * lat1, 1.0 * lon1);
+    let corner2 = new latLngClass.class(1.0 * lat2, 1.0 * lon2);
 
     zrr.add(corner1.getLatLng(), corner2.getLatLng());
 
@@ -73,10 +73,10 @@ router.post('/zrr', function (req, res) {
 
 // Create an impact
 router.post('/impact', function (req, res) {
-    let lat = 1.0 * req.body.lat;
-    let lng = 1.0 * req.body.lng;
-    let type = String(req.body.type);
-    let ttl = 1 * req.body.ttl;
+    let lat = req.body.lat;
+    let lng = req.body.lng;
+    let type = req.body.type;
+    let ttl = req.body.ttl;
 
     // Check if missing argument
     if (lng === undefined || lng === null){
@@ -97,9 +97,9 @@ router.post('/impact', function (req, res) {
     }
 
     let meteorite = new meteoriteClass.class(
-        new latLngClass.class(lat, lng).getLatLng(),
-        type,
-        ttl
+        new latLngClass.class(1.0 * lat, 1.0 * lng).getLatLng(),
+        String(type),
+        1 * ttl
     );
     
     geoResources.add(meteorite);
@@ -109,11 +109,11 @@ router.post('/impact', function (req, res) {
 
 // Add existing player
 router.post('/player', function (req, res) {
-    let login = String(req.body.login);
-    let imageUrl = String(req.body.imageUrl);
-    let lat = 1.0 * req.body.lat;
-    let lng = 1.0 * req.body.lng;
-    let ttl = 1 * req.body.ttl;
+    let login = req.body.login;
+    let imageUrl = req.body.imageUrl;
+    let lat = req.body.lat;
+    let lng = req.body.lng;
+    let ttl = req.body.ttl;
 
     // Check if missing argument
     if (login === undefined || login === null){
@@ -151,10 +151,10 @@ router.post('/player', function (req, res) {
 
     // Create player
     let player = new userClass.class(
-        login,
-        imageUrl,
-        new latLngClass.class(lat, lng).getLatLng(),
-        ttl
+        String(login),
+        String(imageUrl),
+        new latLngClass.class(1.0 * lat, 1.0 * lng).getLatLng(),
+        1 * ttl
     );
 
     geoResources.add(player);

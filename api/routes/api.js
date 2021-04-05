@@ -55,13 +55,11 @@ router.get('/resources', function (req, res) {
 
 // Get all players from resources
 router.get('/resources/users', function (req, res) {
-    let users = {};
-    let index = 0;
+    let users = new Array();
     let datas = geoResources.getAll();
     for (const id of Object.keys(datas)){
         if (datas[id].role === "player"){
-            users[index] = datas[id];
-            index++;
+            users.push(datas[id]);
         }
     }
     res.send(users);
@@ -69,13 +67,11 @@ router.get('/resources/users', function (req, res) {
 
 // Get all impacts from resources
 router.get('/resources/impacts', function (req, res) {
-    let impacts = {};
-    let index = 0;
+    let impacts = new Array();
     let datas = geoResources.getAll();
     for (const id of Object.keys(datas)){
         if (datas[id].role === "impact"){
-            impacts[index] = datas[id];
-            index++;
+            impacts.push(datas[id]);
         }
     }
     res.send(impacts);

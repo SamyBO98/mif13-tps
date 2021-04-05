@@ -1,11 +1,9 @@
 class Zrr {
 
-    static map = {};
-    static size = 0;
+    static map = new Array();
 
     static add(corner1, corner2) {
-        this.map[this.size] = { corner1: corner1, corner2: corner2 };
-        this.size++;
+        this.map.push({ corner1: corner1, corner2: corner2 });
     }
 
     static getAll() {
@@ -13,7 +11,7 @@ class Zrr {
     }
 
     static getSize() {
-        return this.size;
+        return this.map.length;
     }
 
 } module.exports.class = Zrr
