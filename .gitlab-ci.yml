@@ -2,7 +2,7 @@ variables:
   CI_SSH_KEY: "../gitlab-ci.pem"
 
 junit:
-  image: node:8 # docker image with Maven
+  image: node:latest # docker image with Maven
   before_script:
     - cd admin
     - npm install
