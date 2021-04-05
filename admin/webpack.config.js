@@ -1,19 +1,29 @@
 // Generated using webpack-cli http://github.com/webpack-cli
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
+    target: "node",
     mode: 'development',
-    entry: './src/index.js',
+    entry: {
+        // Fichier d'entrée
+        client: './app.js'
+    },
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        // Fichier de sortie: sera utilisé pour la page
+        path: path.resolve(__dirname, './dist'),
+        filename: './index.js'
     },
     devServer: {
         open: true,
         host: 'localhost',
     },
     plugins: [
-        // Add your plugins here
-        // Learn more obout plugins from https://webpack.js.org/configuration/plugins/
+        // jquery plugin
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery"
+        })
     ],
     module: {
         rules: [
@@ -26,4 +36,17 @@ module.exports = {
             // Learn more about loaders from https://webpack.js.org/loaders/
         ],
     },
+    resolve: {
+        modules: [path.resolve(__dirname, './node_modules')],
+        /*fallback: {
+            'path': false,
+            'util': false,
+            'stream': false,
+            'buffer': false,
+            'http': false,
+            'net': false,
+            'crypto': false,
+            'zlib': false
+        }*/
+    }
 };
