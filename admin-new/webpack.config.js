@@ -1,5 +1,6 @@
 const path = require('path');
 var webpack = require('webpack');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -17,7 +18,8 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: 'admin.html',
             template: './src/index.html'
-        })
+        }),
+        new ESLintPlugin(),
     ],
     externals: {
         // require("jquery") is external and available
@@ -65,7 +67,15 @@ module.exports = {
                 ],
 
                 type: 'javascript/auto'
-            }
+            },
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: 'eslint-loader',
+                options: {
+                  // eslint options (if necessary)
+                },
+              }
         ]
     }
 };
