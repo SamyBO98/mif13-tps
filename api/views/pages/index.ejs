@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head'); %>
+</head>
+<body class="container">
+
+<header>
+    <%- include('../partials/header'); %>
+</header>
+
+<main>
+    <div class="jumbotron">
+        <h1>Partie publique</h1>
+        <p>Bienvenue dans la partie publique de l'application</p>
+        <ul>
+            Vous pouvez ici...
+            <li>Ici vous pouvez <bold>récupérer la liste des resources (météorites ou humains)</bold> via l'URL "/api/resources" en GET</li>
+            <li>Vous pouvez aussi<bold>mettre à jour votre image</bold> via l'URL "/api/:id/image" en PUT</li>
+            <li>Et enfin <bold>mettre à jour votre position actuelle</bold> via l'URL "/api/:id/position" en PUT</li>
+        </ul>
+    </div>
+</main>
+
+<footer>
+    <%- include('../partials/footer'); %>
+</footer>
+
+</body>
+</html>

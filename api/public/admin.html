@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Solid Rain - Confidential</title>
+	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css"
+		integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+		integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+		crossorigin="" />
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+		integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+		crossorigin=""></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<script defer src="admin.js"></script></head>
+
+<body>
+	<header>
+		<h1>Solid Rain <span class="xirod">Confidential</span></h1>
+	</header>
+
+	<section>
+		<h2>Carte</h2>
+		<p class="content">
+			Interactions avec la carte:
+			<ul>
+				<li>Au premier clic, un point est placé: Les coordonnées du joueur à ajouter, de la météorite et les premières coordonnées de la ZRR sont ajoutées</li>
+				<li>Au second clic, un autre point est placé: Les coordonnées du joueur et des météorites sont mises à jour. Les secondes coordonnées de la ZRR sont ajoutées</li>
+				<li>Au troisième clic, les 2 derniers points sont supprimés: Les coordonnées de la ZRR sont retirées (il faudra recommencer l'opération)</li>
+			</ul>
+		</p>
+		
+		<p class="content">
+			Indications sur la carte:
+			<ul>
+				<li>Zone rouge: ZRR</li>
+				<li>Point orange: Météorite</li>
+				<li>Point vert: survivant</li>
+				<li>Point rouge: interactions avec la carte</li>
+				<li>Point bleu: Inutile. Sert de repaire par défaut (l'université nous manque...)</li>
+			</ul>
+		</p>
+		<div id="map"></div>
+	</section>
+
+	<section>
+		<h2>ZRR</h2>
+		<div class="content">
+			<p>Appuyez sur "Set" pour sélectionner un point de la carte :</p>
+			<form id="sendZrr" class="pure-form">
+				<fieldset>
+					<h3>Coordonnées 1</h3>
+					<h5>Premier coin</h5>
+					<label for="lat1">Lattitude : </label> <input type="text" id="lat1" name="lat1">&nbsp;&nbsp;
+					<label for="lon1">Longitude : </label> <input type="text" id="lon1" name="lon1">
+				</fieldset>
+
+				<fieldset>
+					<h3>Coordonnées 2</h3>
+					<h5>Second coin</h5>
+					<label for="lat2">Lattitude : </label> <input type="text" id="lat2" name="lat2">&nbsp;&nbsp;
+					<label for="lon2">Longitude : </label> <input type="text" id="lon2" name="lon2">
+				</fieldset>
+
+				<fieldset>
+					<h3>Création d'une ZRR</h3>
+					<label for="sendZrr">Valider la position de la ZRR : </label>&nbsp;&nbsp;
+					<input type="submit" name="sendZrr" value="Ajouter" class="pure-button pure-button-active">
+				</fieldset>
+			</form>
+		</div>
+	</section>
+
+	<section>
+		<h2>Paramètres du lancement d'une météorite</h2>
+		<div class="content">
+			<form id="sendMeteor" class="pure-form">
+				<fieldset>
+					<label for="ttl">Temps de Tranquillité et de Liberté (TTL) par défaut : </label> 
+					<input type="number" min="0" max="180" value="60" id="ttlMeteor" name="ttlMeteor">&nbsp;&nbsp;
+				</fieldset>
+				<fieldset>
+					<label for="type">Type de météorite : </label> <select name="meteorType" id="meteorType">
+						<option value="Astra-Z" selected>Astra-Z</option>
+						<option value="Astra-X">Astra-X</option>
+						<option value="Bêta-X">Bêta-X</option>
+					</select>
+					<br>
+				</fieldset>
+
+				<fieldset>
+					<h3>Coordonnées de la météorite</h3>
+					<label for="lat">Lattitude : </label> <input type="text" id="latMeteor" name="latMeteor">&nbsp;&nbsp;
+					<label for="lon">Longitude : </label> <input type="text" id="lonMeteor" name="lonMeteor">
+				</fieldset>
+
+				<label for="sendMeteor">Passer en mode de déclenchement d'impact (démarre le jeu) : </label>
+				<input type="submit" name="sendMeteor" value="Feu!" class="pure-button pure-button-active">
+			</form>
+		</div>
+	</section>
+
+	<section>
+		<h2>Utilisateurs</h2>
+		<div class="content">
+			<ul id="ul-users">
+					<!-- 
+						USERS LIST: DONE
+					-->
+				<li id="il-user-toto">
+					<a href="javascript:updateImage('Toto');"><img
+							src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Pediculus_humanus_var_capitis.jpg/800px-Pediculus_humanus_var_capitis.jpg?uselang=fr"
+							alt="Pediculus humanus var capitis AKA head louse; public domain from http://phil.cdc.gov/"
+							class="icon"></a>&nbsp;&nbsp;-&nbsp;&nbsp;
+					<a href="javascript:updateName('Toto');">Toto</a>&nbsp;&nbsp;-&nbsp;&nbsp;
+					<strong>TTL</strong> : 180s&nbsp;&nbsp;-&nbsp;&nbsp;
+					<strong>Trophys</strong> : none
+				</li>
+			</ul>
+			<form id="addUser" class="pure-form">
+				<fieldset>
+					<h3>Informations sur l'utilisateur</h3>
+					<label for="login">Login de l'utilisateur: </label> <input type="text" id="loginPlayer" name="loginPlayer">&nbsp;&nbsp;
+					<label for="image">Lien d'une image de profil: </label> <input type="text" id="imagePlayer" name="imagePlayer">&nbsp;&nbsp;
+				</fieldset>
+
+				<fieldset>
+					<label for="ttl">Temps de Tranquillité et de Liberté (TTL) par défaut : </label> 
+					<input type="number" min="0" max="600" value="60" id="ttlPlayer" name="ttlPlayer">&nbsp;&nbsp;
+				</fieldset>
+
+				<fieldset>
+					<h3>Coordonnées de la météorite</h3>
+					<label for="lat">Lattitude : </label> <input type="text" id="latPlayer" name="latPlayer">&nbsp;&nbsp;
+					<label for="lon">Longitude : </label> <input type="text" id="lonPlayer" name="lonPlayer">
+				</fieldset>
+
+				<input type="submit" name="addUser" value="Add" class="pure-button pure-button-active">
+			</form>
+		</div>
+	</section>
+</body>
+
+</html>
