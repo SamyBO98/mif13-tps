@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 var cors = require('cors');
 const app = express()
 const port = 3376
+const path = require('path');
 
 // Router modules
 var api = require('./routes/api')
@@ -25,8 +26,12 @@ app.use(express.urlencoded());
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
-app.get(__dirname + '/', (req, res) => {
-  res.send('Hello World!')
+app.use('/game', express.static(path.join(__dirname, 'public')))
+
+
+//spa
+app.get('/game', function(req, res) {
+  res.sendFile(__dirname + '/public/admin.html');
 })
 
 //router api
