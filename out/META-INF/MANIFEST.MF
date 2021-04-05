@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Created-By: IntelliJ IDEA
-Built-By: otman
-Build-Jdk: version 11.0.9
-Implementation-Title: tp1
-Implementation-Version: 0.0.1-SNAPSHOT
-Implementation-Vendor-Id: fr.univlyon1.mif13
-Main-Class: ${start-class}
-
