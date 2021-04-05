@@ -115,7 +115,7 @@ function createZrr(lat1, lon1, lat2, lon2) {
         };
 
         let request = new Request(url)
-
+ 
         fetch(request, init)
             .then(() => {
                 res(true);
