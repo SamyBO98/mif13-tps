@@ -6,6 +6,6 @@ junit:
   before_script:
     - cd admin
     - npm install
-    - chmod 400 $CI_SSH_KEY
+    - echo "$CI_SSH_KEY" > private_key.pem && chmod 400 private_key.pem
   script:
     - npm run buildprod
