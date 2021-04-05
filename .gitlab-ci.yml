@@ -1,0 +1,10 @@
+variables:
+  CI_SSH_KEY: "./gitlab-ci.pem"
+
+junit:
+  image: maven:3.6.1-jdk-11 # docker image with Maven
+  before_script:
+    - chmod 400 $CI_SSH_KEY
+  script:
+    - cd admin
+    - npm run builprod

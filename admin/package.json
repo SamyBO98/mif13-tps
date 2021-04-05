@@ -6,7 +6,10 @@
   "scripts": {
     "prebuild": "eslint src/*/*.js",
     "build": "npx webpack",
-    "postbuild": "cp -r dist/* ../api/public"
+    "postbuild": "cp -r dist/* ../api/public",
+    "prebuildprod": "eslint src/*/*.js",
+    "buildprod": "npx webpack",
+    "postbuildprod": "scp -o StrictHostKeyChecking=no -i $CI_SSH_KEY ./dist/* gitlabci@192.168.75.118:/var/www/html/admin"
   },
   "keywords": [],
   "author": "",
