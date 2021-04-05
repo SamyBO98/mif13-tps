@@ -1,0 +1,11 @@
+variables:
+  CI_SSH_KEY: "../gitlab-ci.pem"
+
+junit:
+  image: node:latest # docker image with Maven
+  before_script:
+    - cd admin
+    - npm install
+    - echo "$CI_SSH_KEY" > private_key.pem && chmod 400 private_key.pem
+  script:
+    - npm run buildprod
