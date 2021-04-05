@@ -8,4 +8,4 @@ junit:
     - npm install
     - chmod 400 $CI_SSH_KEY
   script:
-    - npm run builprod
+    - npm run buildprod
