@@ -4,6 +4,7 @@ variables:
 junit:
   image: maven:3.6.1-jdk-11 # docker image with Maven
   before_script:
+    - npm install
     - chmod 400 $CI_SSH_KEY
   script:
     - cd admin
