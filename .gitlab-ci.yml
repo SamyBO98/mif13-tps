@@ -4,8 +4,8 @@ variables:
 junit:
   image: node:8 # docker image with Maven
   before_script:
+    - cd admin
     - npm install
     - chmod 400 $CI_SSH_KEY
   script:
-    - cd admin
     - npm run builprod
