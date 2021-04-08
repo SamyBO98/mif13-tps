@@ -1,6 +1,7 @@
 /* eslint-env jquery */
 /* global L */
 import { mymap } from './map.js';
+import { apiPath } from './apiPath.js';
 
 var greenIcon = new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
@@ -15,7 +16,7 @@ var greenIcon = new L.Icon({
  * Chargement de la liste des utilisateurs et météorites existants
  */
 function getAllPlayers() {
-    let url = "http://localhost:3376/api/resources/users";
+    let url = `${apiPath}/api/resources/users`;
 
     let init = {
         method: 'GET',
