@@ -4,7 +4,7 @@ var axios = require('axios')
 var fs = require('fs')
 
 // Call classes
-var Authenticate = JSON.parse(fs.readFileSync('routes/authenticate.json', 'utf-8'))
+var Authenticate = JSON.parse(fs.readFileSync('./authenticate.json', 'utf-8'))
 var userClass = require('./classes/User')
 var latLngClass = require('./classes/LatLng')
 var meteoriteClass = require('./classes/Meteorite')
@@ -27,10 +27,11 @@ router.use(function timeLog(req, res, next) {
     next()
 })
 
+//spa
+router.use(express.static('public'));
 router.get('/', function (req, res) {
-    res.send(geoResources.getAll());
+    res.sendFile(__dirname + `/public/admin.html`);
 })
-
 
 // Create a zrr
 router.get('/zrr', function (req, res) {

@@ -1,5 +1,6 @@
 /* eslint-env jquery */
 import "../css/style.css";
+import { apiPath } from './apiPath.js';
 
 import getAllZrr from './map.js';
 import getAllPlayers from './user.js';
@@ -67,7 +68,7 @@ const launchRequests = new Promise((res) => {
 function sendMeteorite(lat, lon, type, ttl) {
 
     return new Promise(function (res) {
-        let url = "http://localhost:3376/admin/impact";
+        let url = `${apiPath}/admin/impact`;
 
         let datas = {
             lat: lat,
@@ -97,7 +98,7 @@ function sendMeteorite(lat, lon, type, ttl) {
 function createZrr(lat1, lon1, lat2, lon2) {
 
     return new Promise(function (res) {
-        let url = `http://localhost:3376/admin/zrr`;
+        let url = `${apiPath}/admin/zrr`;
 
         let datas = {
             lat1: lat1,
@@ -127,7 +128,7 @@ function createZrr(lat1, lon1, lat2, lon2) {
 function createUser(login, image, lat, lon, ttl) {
 
     return new Promise(function (res) {
-        let url = `http://localhost:3376/admin/player`;
+        let url = `${apiPath}/admin/player`;
 
         let datas = {
             login: login,

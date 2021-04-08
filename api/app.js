@@ -7,8 +7,8 @@ const port = 3376
 const path = require('path');
 
 // Router modules
-var api = require('./routes/api')
-var admin = require('./routes/admin')
+var api = require('./api')
+var admin = require('./admin')
 
 // cors
 app.use(cors());
@@ -26,12 +26,9 @@ app.use(express.urlencoded());
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
-app.use('/game', express.static(path.join(__dirname, 'public')))
-
-
-//spa
-app.get('/game', function(req, res) {
-  res.sendFile(__dirname + '/public/admin.html');
+//express page
+app.get('/', function(req, res) {
+  res.render('pages/index');
 })
 
 //router api

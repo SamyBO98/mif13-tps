@@ -1,5 +1,6 @@
 /* eslint-env jquery */
 /* global L */
+import { apiPath } from './apiPath.js';
 // initialisation de la map
 let lat = 45.782, lng = 4.8656, zoom = 20;
 let lat1 = null, lng1 = null, lat2 = null, lng2 = null;
@@ -91,7 +92,7 @@ function updateMap() {
 
 // Set ZRR on the map
 function getAllZrr() {
-    let url = "http://localhost:3376/admin/zrr";
+    let url = `${apiPath}/admin/zrr`;
 
     let init = {
         method: 'GET',

@@ -1,4 +1,5 @@
 import { mymap } from './map.js';
+import { apiPath } from './apiPath.js';
 /* global L */
 
 var orangeIcon = new L.Icon({
@@ -12,7 +13,7 @@ var orangeIcon = new L.Icon({
 
 // Set impacts on the map
 function getAllImpacts() {
-    let url = "http://localhost:3376/api/resources/impacts";
+    let url = `${apiPath}/api/resources/impacts`;
 
     let init = {
         method: 'GET',

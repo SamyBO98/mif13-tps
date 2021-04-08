@@ -10,7 +10,7 @@ var zrr = require('./classes/Zrr').class
 var latLngClass = require('./classes/LatLng')
 var userClass = require('./classes/User')
 var meteoriteClass = require('./classes/Meteorite')
-var Authenticate = JSON.parse(fs.readFileSync('routes/authenticate.json', 'utf-8'))
+var Authenticate = JSON.parse(fs.readFileSync('./authenticate.json', 'utf-8'))
 
 // create application/json parser
 var jsonParser = bodyParser.json()

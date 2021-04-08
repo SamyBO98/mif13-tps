@@ -4,7 +4,7 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    entry: ['./src/js/parameters.js', './src/js/map.js', './src/js/user.js', './src/js/form.js', './src/js/impact.js'],
+    entry: ['./src/js/apiPath.js', './src/js/parameters.js', './src/js/map.js', './src/js/user.js', './src/js/form.js', './src/js/impact.js'],
     mode: 'development',
     output: {
         filename: 'admin.js',
