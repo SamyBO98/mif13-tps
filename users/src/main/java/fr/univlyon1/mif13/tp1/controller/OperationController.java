@@ -27,7 +27,8 @@ import static fr.univlyon1.mif13.tp1.utils.JwtTokenUtils.generateToken;
 import static fr.univlyon1.mif13.tp1.utils.JwtTokenUtils.verifyToken;
 
 @Controller
-@CrossOrigin(origins = {"http://localhost", "http://192.168.75.118", "https://192.168.75.118"})
+//@CrossOrigin(origins = {"http://localhost", "http://192.168.75.118", "https://192.168.75.118"})
+@CrossOrigin(origins = {"http://localhost/", "http://192.168.75.118/", "https://192.168.75.118/"})
 public class OperationController {
 
     //DAO
