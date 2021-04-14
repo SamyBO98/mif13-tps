@@ -26,7 +26,7 @@ import java.util.Optional;
 import static fr.univlyon1.mif13.tp1.utils.JwtTokenUtils.generateToken;
 import static fr.univlyon1.mif13.tp1.utils.JwtTokenUtils.verifyToken;
 
-@Controller
+@RestController
 public class OperationController {
 
     //DAO
