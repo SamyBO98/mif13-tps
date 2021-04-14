@@ -12,6 +12,7 @@ public class UserDao implements Dao<User> {
     public UserDao(){
         users.put("otman-le-rigolo", new User("otman-le-rigolo", "password"));
         users.put("samy-le-pas-drole", new User("samy-le-pas-drole", "the-password-78"));
+        users.put("random-user", new User("random-user", "random-password"));
     }
 
     @Override
