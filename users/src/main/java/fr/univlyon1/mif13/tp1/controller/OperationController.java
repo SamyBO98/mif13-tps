@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -44,8 +45,7 @@ public class OperationController {
             @ApiResponse(responseCode = "204", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Wrong login or password")
     })
-    @PostMapping("/login")
-    @CrossOrigin(origins = {"http://localhost:*", "http://192.168.75.118", "https://192.168.75.118"})
+    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Void> login(@RequestParam("login") @Schema(example = "otman-le-rigolo") String login, @RequestParam("password") @Schema(example = "password") String password, @RequestHeader("Origin") String origin) {
         //Check if the user exists
         Optional<User> opUser = userDao.get(login);
@@ -78,8 +78,7 @@ public class OperationController {
             @ApiResponse(responseCode = "204", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Error: User not exists / Token is wrong / User is not connected")
     })
-    @DeleteMapping("/logout")
-    @CrossOrigin(origins = {"http://localhost:*", "http://192.168.75.118", "https://192.168.75.118"})
+    @DeleteMapping(value = "/logout")
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token){
         //Get the request servlet
         HttpServletRequest request = getRequest();
@@ -111,7 +110,7 @@ public class OperationController {
             @ApiResponse(responseCode = "404", description = "Error: Token is wrong / User is not connected")
     })
     @GetMapping("/authenticate")
-    @CrossOrigin(origins = {"http://localhost:*", "http://192.168.75.118", "https://192.168.75.118"})
+    @ResponseBody
     public ResponseEntity<Void> authenticate(@RequestParam("token") @Schema(example = "edit-this-token") String token, @RequestParam("origin") @Schema(example = "*/*") String origin) {
         //Get the request servlet
         HttpServletRequest request = getRequest();

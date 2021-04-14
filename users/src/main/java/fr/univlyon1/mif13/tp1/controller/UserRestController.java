@@ -70,7 +70,6 @@ public class UserRestController {
     })
     @GetMapping(value = "/users/{login}", produces = { "application/json", "application/xml" })
     @ResponseBody
-    @CrossOrigin(origins = {"http://localhost", "http://192.168.75.118", "https://192.168.75.118"})
     public User getUser(@PathVariable("login") @Schema(example = "otman-le-rigolo") @NotNull String login) {
         //Check if the user exists
         Optional<User> opUser = userDao.get(login);
@@ -87,7 +86,6 @@ public class UserRestController {
      * @return User's data.
      */
     @GetMapping(value = "/users/{login}", produces = "text/html")
-    @CrossOrigin(origins = {"http://localhost", "http://192.168.75.118", "https://192.168.75.118"})
     public ModelAndView getUserHtml(@PathVariable("login") @Schema(example = "otman-le-rigolo") @NotNull String login) {
         //Check if the user exists
         Optional<User> opUser = userDao.get(login);
