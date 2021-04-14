@@ -44,7 +44,8 @@ public class OperationController {
             @ApiResponse(responseCode = "204", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Wrong login or password")
     })
-    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118/", "https://192.168.75.118/"})
+    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118/", "https://192.168.75.118/"},
+    exposedHeaders = "Authorization")
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestParam("login") @Schema(example = "otman-le-rigolo") String login, @RequestParam("password") @Schema(example = "password") String password, @RequestHeader("Origin") String origin) {
         //Check if the user exists
