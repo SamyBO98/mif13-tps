@@ -69,6 +69,7 @@ public class UserRestController {
             @ApiResponse(responseCode = "400", description = "User not exists", content = @Content())
     })
     @GetMapping(value = "/users/{login}", produces = { "application/json", "application/xml" })
+    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118/", "https://192.168.75.118/"})
     @ResponseBody
     public User getUser(@PathVariable("login") @Schema(example = "otman-le-rigolo") @NotNull String login) {
         //Check if the user exists
@@ -86,6 +87,7 @@ public class UserRestController {
      * @return User's data.
      */
     @GetMapping(value = "/users/{login}", produces = "text/html")
+    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118/", "https://192.168.75.118/"})
     public ModelAndView getUserHtml(@PathVariable("login") @Schema(example = "otman-le-rigolo") @NotNull String login) {
         //Check if the user exists
         Optional<User> opUser = userDao.get(login);
