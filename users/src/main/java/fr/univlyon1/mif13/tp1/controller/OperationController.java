@@ -78,8 +78,7 @@ public class OperationController {
             @ApiResponse(responseCode = "204", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Error: User not exists / Token is wrong / User is not connected")
     })
-    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118/", "https://192.168.75.118/"},
-            allowedHeaders = "Authorization")
+    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118/", "https://192.168.75.118/"})
     @DeleteMapping("/logout")
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token){
         //Get the request servlet
@@ -111,8 +110,7 @@ public class OperationController {
             @ApiResponse(responseCode = "204", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Error: Token is wrong / User is not connected")
     })
-    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118/", "https://192.168.75.118/"},
-    allowedHeaders = "Authorization")
+    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118/", "https://192.168.75.118/"})
     @GetMapping("/authenticate")
     public ResponseEntity<Void> authenticate(@RequestParam("token") @Schema(example = "edit-this-token") String token, @RequestParam("origin") @Schema(example = "*/*") String origin) {
         //Get the request servlet
