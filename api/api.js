@@ -15,37 +15,30 @@ var Authenticate = JSON.parse(fs.readFileSync('./authenticate.json', 'utf-8'))
 // create application/json parser
 var jsonParser = bodyParser.json()
 
-// MOCK OBJECTS
-/*
-var user = new userClass.class(
-    "otman", 
-    "https://img-31.ccm2.net/gErGuHhHKhHj1dWOgTQZ087xi-E=/1240x/smart/0303393db20f42cfae31ed12d4fc2c0d/ccmcms-hugo/10601961.jpg", 
-    new latLngClass.class(45.784, 4.8659).getLatLng(),
-    180
-);
-var meteorite = new meteoriteClass.class(
-    new latLngClass.class(45.780, 4.8660).getLatLng(),
-    "Astra-X",
-    50
-);
-geoResources.add(user);
-geoResources.add(meteorite);
-*/
-
 // Middleware that is specific to this router
-router.use(function timeLog (req, res, next) {
-    // Launch authenticate function
-    axios.get("https://proxy-tps-m1if13-2019.univ-lyon1.fr/118/v1/authenticate?origin=" + Authenticate.origin + "&token=" + Authenticate.token).then(response => {
-        //next()
-    }).catch(error => {
-        //res.status(401).send('Authentication failed')
-    })
-    next()
+router.use(function timeLog(req, res, next) {
+    if (req.headers.authorization) {
+        const authorization = req.headers.authorization;
+        const origin = "*/*";
+
+        axios.get("http://192.168.75.118:8080/v1/authenticate", null, {
+            params: {
+                token: authorization,
+                origin: origin
+            }
+        }).then(() => {
+            next();
+        }).catch(error => {
+            return res.status(401).send(error.message);
+        });
+    } else {
+        return res.status(403).send("Votre requête n'a pas détecté de token stocké dans le header.");
+    }
 })
 
 // Get all living resources
 router.get('/', function (req, res) {
-    res.send("Yo")
+    res.send("Ceci est un message confirmant que l'url fonctionne :o")
 })
 
 // Get all resources
@@ -53,73 +46,55 @@ router.get('/resources', function (req, res) {
     res.send(geoResources.getAll())
 })
 
-// Get all players from resources
-router.get('/resources/users', function (req, res) {
-    let users = new Array();
-    let datas = geoResources.getAll();
-    for (const id of Object.keys(datas)){
-        if (datas[id].role === "player"){
-            users.push(datas[id]);
-        }
-    }
-    res.send(users);
+// Get all zrr
+router.get('/zrr', function (req, res) {
+    res.send(zrr.getAll());
 })
 
-// Get all impacts from resources
-router.get('/resources/impacts', function (req, res) {
-    let impacts = new Array();
-    let datas = geoResources.getAll();
-    for (const id of Object.keys(datas)){
-        if (datas[id].role === "impact"){
-            impacts.push(datas[id]);
+// Get user
+router.get('/user/:login', function(req, res) {
+    const login = req.params.login;
+
+    let resources = geoResources.getAll();
+    for (const id of Object.keys(resources)) {
+        if (resources[id].role === "player" && resources[id].login === login) {
+            return res.status(204).send(resources[id]);
         }
     }
-    res.send(impacts);
+    return res.status(404).send('User not found in the game');
 })
 
 // Update user's position
-router.put('/resources/:resourceId/position', jsonParser, function (req, res) {
-    let id = req.params.resourceId;
-    let body = req.body.position;
+router.put('/resources/:userId/position', jsonParser, function (req, res) {
+    const login = req.params.userId;
+    const position = req.body.position;
 
-    if (map[id] !== undefined){
-        if (Object.keys(body).length == 2){
-            if (Number.isInteger(body[0]) && Number.isInteger(body[1])){
-                if (body[0] >= 0 && body[1] >= 0){
-                    let newPosition = new latLng.class(body[0], body[1]).getLatLng();
-                    map[id].updatePosition(newPosition);
-                    res.status(204).send('Successful operation')
-                } else {
-                    res.status(400).send('Invalid position object (positions)')
-                }
-            } else {
-                res.status(400).send('Invalid position object (cast number)')
-            }
-        } else {
-            res.status(400).send('Invalid position object (size)')
+    let users = geoResources.getAll();
+    for (const id of Object.keys(users)) {
+        if (users[id].role === "player" && users[id].login === login) {
+            users[id].setPosition(position);
+            res.status(204).send('Successful operation');
         }
-    } else {
-        res.status(404).send('User not found')
     }
+
+    res.status(404).send('User not found');
+
 })
 
 // Update user's image
-router.put('/resources/:resourceId/image', jsonParser, function (req, res) {
-    //TODO CHANGE SOMETHING FOR URL OBJECT (MAYBE LAUNCH AN API OF AN EXISTING WEBSITE)
+router.put('/resources/:userId/image', jsonParser, function (req, res) {
+    const login = req.params.userId;
+    const url = req.body.url;
 
-    let id = req.params.resourceId;
-    let body = req.body.url;
-
-    if (map[id] !== undefined){
-        if (body.endsWith('.png') || body.endsWith('.jpg')){
-            map[id].updateImageLocation(body);
-            res.status(204).send('Successful operation')
-        } else {
-            res.status(400).send('Invalid image URL object')
+    let users = geoResources.getAll();
+    for (const id of Object.keys(users)) {
+        if (users[id].role === "player" && users[id].login === login) {
+            users[id].setImage(url);
+            res.status(204).send('Successful operation');
         }
-    } else {
-        res.status(404).send('User not found')
     }
+
+    res.status(404).send('User not found');
 })
 
 module.exports = router

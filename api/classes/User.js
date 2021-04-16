@@ -21,7 +21,7 @@ class User {
         this.ttl = ttl;
     }
 
-    setlogin(login){
+    setLogin(login){
         this.login = login;
     }
 

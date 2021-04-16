@@ -13,7 +13,7 @@ var orangeIcon = new L.Icon({
 
 // Set impacts on the map
 function getAllImpacts() {
-    let url = `${apiPath}/api/resources/impacts`;
+    let url = `${apiPath}/admin/resources/impacts`;
 
     let init = {
         method: 'GET',
@@ -27,6 +27,8 @@ function getAllImpacts() {
     fetch(request, init)
         .then(resp => resp.json())
         .then(impact => {
+
+            console.log(impact);
 
             for (const id of Object.keys(impact)) {
 

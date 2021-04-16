@@ -1,11 +1,13 @@
 variables:
-  CI_SSH_KEY: "../gitlab-ci.pem"
+  CI_SSH_KEY: "./gitlab-ci.pem"
 
-junit:
-  image: node:latest # docker image with Maven
+node:
+  image: node:latest # docker image with node
   before_script:
-    - cd admin
-    - npm install
-    - chmod 400 private_key.pem
+    - . setup-mvn-proxy.sh
+    - chmod 400 $CI_SSH_KEY
   script:
+    - cd admin
     - npm run buildprod
+    - cd ..
+    - scp -o StrictHostKeyChecking=no -i $CI_SSH_KEY ./api/* gitlabci@192.168.75.118:/var/game-express/

@@ -16,7 +16,7 @@ var greenIcon = new L.Icon({
  * Chargement de la liste des utilisateurs et météorites existants
  */
 function getAllPlayers() {
-    let url = `${apiPath}/api/resources/users`;
+    let url = `${apiPath}/admin/resources/users`;
 
     let init = {
         method: 'GET',
@@ -32,15 +32,17 @@ function getAllPlayers() {
         .then(user => {
             var ul = document.getElementById("ul-users");
 
+            console.log(user);
+
             for (const id of Object.keys(user)) {
                 renderHtmlUser(user[id], ul);
-                //marker for players
-                L.marker([user[id].position[0], user[id].position[1]], { icon: greenIcon })
-                    .addTo(mymap)
-                    .bindPopup(`Utilisateur <strong>${user[id].login}</strong><br>TTL restant: <strong>${user[id].ttl}</strong>s.`);
-
+                //marker for players that have a position
+                if (user[id].position != null) {
+                    L.marker([user[id].position[0], user[id].position[1]], { icon: greenIcon })
+                        .addTo(mymap)
+                        .bindPopup(`Utilisateur <strong>${user[id].login}</strong><br>TTL restant: <strong>${user[id].ttl}</strong>s.`);
+                }
                 //console.log(`Login: ${user[id].login}, ttl: ${user[id].ttl}, position: [${user[id].position[0]}, ${user[id].position[1]}]`);
-
             }
         }).catch(error => {
             console.log(error);

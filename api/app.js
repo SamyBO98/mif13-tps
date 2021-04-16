@@ -27,7 +27,7 @@ app.use(express.urlencoded());
 app.use(express.json());
 
 //express page
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
   res.render('pages/index');
 })
 
@@ -39,5 +39,5 @@ app.use('/admin', admin)
 
 // 404 error pages
 app.use(function (req, res, next) {
-    res.status(404).send("This page does not exists")
+  res.status(404).send("This page does not exists")
 })

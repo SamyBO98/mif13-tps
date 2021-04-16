@@ -9,7 +9,7 @@ describe("Players", function () {
 
     describe("GET /", function () {
         it("Get all existing players (empty)", function () {
-            axios.get(`${apiPath}/api/resources/users`)
+            axios.get(`${apiPath}/admin/resources/users`)
                 .then((resp) => {
                     expect(resp.status).toBe(200);
                     expect(resp.data.length).toBe(0);
@@ -98,7 +98,7 @@ describe("Players", function () {
     describe("GET /", function () {
         it("Get all existing players (should be 2)", function () {
 
-            axios.get(`${apiPath}/api/resources/users`)
+            axios.get(`${apiPath}/admin/resources/users`)
                 .then((resp) => {
                     expect(resp.status).toBe(200);
                     expect(resp.data.length).toBe(2);

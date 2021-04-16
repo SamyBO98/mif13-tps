@@ -9,7 +9,7 @@ describe("Impacts", function () {
 
     describe("GET /", function () {
         it("Get all existing impacts (empty)", function () {
-            axios.get(`${apiPath}/api/resources/impacts`)
+            axios.get(`${apiPath}/admin/resources/impacts`)
                 .then((resp) => {
                     expect(resp.status).toBe(200);
                     expect(resp.data.length).toBe(0);
@@ -74,7 +74,7 @@ describe("Impacts", function () {
 
     describe("GET /", function () {
         it("Get all existing impacts (should be 2)", function () {
-            axios.get(`${apiPath}/api/resources/impacts`)
+            axios.get(`${apiPath}/admin/resources/impacts`)
                 .then((resp) => {
                     expect(resp.status).toBe(200);
                     expect(resp.data.length).toBe(2);

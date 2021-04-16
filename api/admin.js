@@ -11,19 +11,22 @@ var meteoriteClass = require('./classes/Meteorite')
 var geoResources = require('./classes/GeoResources').class
 var zrr = require('./classes/Zrr').class
 
+// MOCK OBJECT: REQUETE VERS SPRING POUR RECUPERER TOUT LES UTILISATEURS ET ON LES INITIALISE PAR DEFAUT
+axios.get("http://192.168.75.118:8080/v1/users").then(resp => {
+    console.log(resp.data);
+  for (user in resp.data) {
+    var newUser = new userClass.class(
+        resp.data[user], null, null, 60
+    );
+    geoResources.add(newUser);
+  }
+}).catch(error => {
+  console.log(error);
+});
+
+
 // Middleware that is specific to this router
 router.use(function timeLog(req, res, next) {
-    // Launch authenticate function
-    axios.get('https://proxy-tps-m1if13-2019.univ-lyon1.fr/118/v1/authenticate', {
-        params: {
-            token: Authenticate.token,
-            origin: Authenticate.origin
-        }
-    }).then(response => {
-        //next()
-    }).catch(error => {
-        //res.status(401).send('Authentication failed')
-    })
     next()
 })
 
@@ -31,11 +34,6 @@ router.use(function timeLog(req, res, next) {
 router.use(express.static('public'));
 router.get('/', function (req, res) {
     res.sendFile(__dirname + `/public/admin.html`);
-})
-
-// Create a zrr
-router.get('/zrr', function (req, res) {
-    res.send(zrr.getAll());
 })
 
 // Create a zrr
@@ -163,14 +161,33 @@ router.post('/player', function (req, res) {
     res.status(204).send("Succesfull operation");
 })
 
-// Create a game (post)
-router.get('/:idresources/infos', function (req, res) {
-    res.send('Infos')
+// Get all players from resources
+router.get('/resources/users', function (req, res) {
+    let users = new Array();
+    let datas = geoResources.getAll();
+    for (const id of Object.keys(datas)) {
+        if (datas[id].role === "player") {
+            users.push(datas[id]);
+        }
+    }
+    res.send(users);
 })
 
-// Create a game (post)
-router.post('/announce', function (req, res) {
-    res.send('Annonce')
+// Get all impacts from resources
+router.get('/resources/impacts', function (req, res) {
+    let impacts = new Array();
+    let datas = geoResources.getAll();
+    for (const id of Object.keys(datas)) {
+        if (datas[id].role === "impact") {
+            impacts.push(datas[id]);
+        }
+    }
+    res.send(impacts);
+})
+
+// Get all zrr
+router.get('/zrr', function (req, res) {
+    res.send(zrr.getAll());
 })
 
 module.exports = router
