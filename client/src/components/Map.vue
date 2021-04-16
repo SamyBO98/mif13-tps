@@ -1,9 +1,13 @@
 <template>
+  <div class="main-title">
+    <h1>Page d'accueil</h1>
+    <h3>Vous avez accès à la carte</h3>
+    <h4>Une fois connecté(e), la carte sera centrée sur votre position</h4>
+  </div>
+
   <section>
-    <h2>Carte</h2>
     <p class="content">
-      <strong>TODO :</strong> mettre Ã jour les positions des diffÃ©rents objets
-      sur la carte.
+      <strong>Carte</strong>
     </p>
     <div id="map" class="map"></div>
   </section>
@@ -11,6 +15,7 @@
 
 <script>
 import "leaflet/dist/leaflet.css";
+import axios from "axios";
 
 // This part resolves an issue where the markers would not appear in webpack
 import { Icon } from "leaflet";
@@ -40,6 +45,7 @@ export default {
     },
   },
   async beforeMount() {
+    console.log("call the function");
     // HERE is where to load Leaflet components!
     const L = await import("leaflet");
     // ProcÃ©dure d'initialisation
@@ -80,13 +86,35 @@ export default {
       this.updateMap();
     });
   },
+  async updateDatasToMap() {
+    console.log("call the function");
+    // Request to get all ZRR
+    axios({
+      method: "get",
+      url: "/express/admin/zrr",
+      headers: {
+        Origin: "*",
+      },
+    })
+      .then((resp) => {
+        console.log(resp);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    // Request to get all impacts
+
+    // Request to get all players
+  },
 };
 </script>
 
 <style scoped>
 .map {
+  margin: auto;
   height: 400px;
-  width: 100%;
+  width: 75%;
   border: 1px solid;
 }
 </style>
