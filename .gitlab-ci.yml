@@ -11,4 +11,4 @@ node:
     - npm install
     - npm run buildprod
     - cd ..
-    - scp -o StrictHostKeyChecking=no -i $CI_SSH_KEY ./api/* gitlabci@192.168.75.118:/var/game-express/
+    - scp -r -o StrictHostKeyChecking=no -i $CI_SSH_KEY ./api/* gitlabci@192.168.75.118:/var/game-express/
