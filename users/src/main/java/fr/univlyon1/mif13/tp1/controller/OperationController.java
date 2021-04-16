@@ -65,7 +65,7 @@ public class OperationController {
         HttpServletRequest request = getRequest();
 
         //Generate JWT token and put it on Header ("Authentication")
-        String jwtToken = generateToken(login, false, request);
+        String jwtToken = generateToken(login, false, origin);
         HttpHeaders response = new HttpHeaders();
         response.add("Authorization", "Bearer " + jwtToken);
         response.add("Access-Control-Expose-Headers", "Authorization");
@@ -85,7 +85,7 @@ public class OperationController {
         HttpServletRequest request = getRequest();
 
         try{
-            String login = verifyToken(token.replace("Bearer ", ""), request);
+            String login = verifyToken(token.replace("Bearer ", ""), request.getHeader("Origin"));
 
             //Check if the user exists
             Optional<User> opUser = userDao.get(login);
@@ -118,7 +118,7 @@ public class OperationController {
 
         try{
             //Get the user by using JWT token and disconnect him
-            String login = verifyToken(token.replace("Bearer ", ""), request);
+            String login = verifyToken(token.replace("Bearer ", ""), origin);
 
             if (!userDao.get(login).get().isConnected()){
                 throw new UserConnectedException(login, false);

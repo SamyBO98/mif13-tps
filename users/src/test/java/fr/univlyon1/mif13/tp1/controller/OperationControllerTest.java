@@ -34,7 +34,7 @@ public class OperationControllerTest {
                 .post(url)
                 .param("login", "otman-le-rigolo")
                 .param("password", "password")
-                .header("Origin", "http://localhost:4000"))
+                .header("Origin", "http://localhost"))
                 .andExpect(status().is(204))
                 .andReturn();
 
@@ -105,7 +105,7 @@ public class OperationControllerTest {
         mock.perform(MockMvcRequestBuilders
                 .get(url)
                 .param("token", goodLogin())
-                .param("origin", "*/*"))
+                .param("origin", "http://localhost"))
                 .andExpect(status().is(204));
 
         //Launch request (forget parameter)
