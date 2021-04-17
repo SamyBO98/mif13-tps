@@ -9,7 +9,18 @@ export function apiLogin(login, password) {
                 login: login,
                 password: password,
             }
-        }
+        },
+    );
+}
+
+export function apiLogout(token) {
+    return axios.delete(
+        "/spring/logout",
+        {
+            headers: {
+                Authorization: token,
+            },
+        },
     );
 }
 

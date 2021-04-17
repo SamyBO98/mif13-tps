@@ -3,6 +3,7 @@ import { apiGetUser } from "../api-client/game";
 import { apiUpdatePlayerPositions } from "../api-client/game";
 import { apiGetZrr } from "../api-client/game";
 import { apiGetImpacts } from "../api-client/game";
+import { apiLogout } from "../api-client/game";
 import router from '../router';
 
 const actions = {
@@ -18,6 +19,16 @@ const actions = {
             }).catch((error) => {
                 console.log(error);
             })
+    },
+    logout({commit}){
+        apiLogout(localStorage["token"].slice(7))
+            .then((resp) => {
+                console.log(resp);
+                localStorage.clear();
+                commit('clear');
+            }).catch((error) => {
+                console.log(error);
+            });
     },
     getUser({commit}, login) {
         // get datas about the user and commit it

@@ -32,9 +32,6 @@ export default {
       token: localStorage.getItem("token"),
     }
   },
-  computed: mapState({
-    token: (state) => state.token,
-  }),
   methods: {
     ...mapActions(["login"]),
     formLogin() {

@@ -14,7 +14,13 @@ const mutations = {
     },
     setImpacts(state, impacts) {
         state.impacts = impacts;
-    }
+    },
+    clear(state) {
+        state.ttl = null;
+        state.playerPosition = null;
+        state.impacts = [];
+        state.zrr = [];
+    },
 };
 
 export default mutations;
