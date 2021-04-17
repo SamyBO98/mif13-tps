@@ -13,6 +13,7 @@ const actions = {
                 console.log(resp);
                 localStorage.setItem("token", resp.headers.authorization);
                 dispatch('getUser', datas.login);
+                dispatch('getAllZrrAndImpacts');
                 router.push('user');
             }).catch((error) => {
                 console.log(error);
@@ -46,10 +47,12 @@ const actions = {
         // ZRR
         apiGetZrr(localStorage["token"].slice(7))
             .then((resp) => {
-                console.log(resp);
+                var res = new Array();
                 for (let zrr of resp.data) {
-                    commit('addZrr', zrr);
+                    res.push([zrr.corner1, zrr.corner2]);
                 }
+                console.log(res);
+                commit('setZrr', res);
             }).catch((error) => {
                 console.log(error);
             });
@@ -57,14 +60,14 @@ const actions = {
         // Impacts
         apiGetImpacts(localStorage["token"].slice(7))
             .then((resp) => {
-                console.log(resp);
                 let res = new Array();
                 for (const id of Object.keys(resp.data)) {
                     if (resp.data[id].role === "impact") {
+                        console.log(resp.data[id]);
                         res.push(resp.data[id]);
                     }
                 }
-                commit('addImpacts', res);
+                commit('setImpacts', res);
             }).catch((error) => {
                 console.log(error);
             });

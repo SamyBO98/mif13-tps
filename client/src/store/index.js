@@ -4,10 +4,10 @@ import actions from "./actions.js";
 
 export default createStore({
   state: {
-    ttl: 0,
-    zrr: new Array(),
+    ttl: null,
+    zrr: [],
     playerPosition: null,
-    impacts: new Array(),
+    impacts: [],
   },
   mutations,
   actions,

@@ -7,11 +7,13 @@
 
   <section>
     <p class="content">
-      <strong>Carte</strong>
-      Il reste <strong>{{ ttl }}</strong
-      >s.
-      <br />
-      <strong v-if="ttl === 0">Le TTL a atteint 0. Vous avez perdus!</strong>
+      <strong>Carte</strong><br />
+      <span v-if="ttl === null">Vous devez vous connecter pour récupérer votre TTL.</span>
+      <span v-else>
+        Il reste <strong>{{ ttl }}</strong>s.
+        <br />
+        <strong v-if="ttl === 0">Le TTL a atteint 0. Vous avez perdus!</strong>
+      </span>
     </p>
     <div id="map" class="map"></div>
   </section>
@@ -49,7 +51,6 @@ export default {
     ...mapActions([
       "updatePlayerPositions",
       "decreaseTtlAction",
-      "getAllZrrAndImpacts",
     ]),
     updateMap: function (L, greenIcon) {
       // Mise à jour du marqueur temporaire pour indiquer au joueur sa nouvelle coordonnées temporaire (avant l'envoi des coordonnées au serveur)
@@ -85,48 +86,46 @@ export default {
       }
     },
     decreaseTtl: function () {
-      if (this.ttl > 0) {
+      if (this.ttl !== null && this.ttl > 0) {
         this.decreaseTtlAction();
       }
     },
-    getZrrAndMeteorites: function () {
-      this.getAllZrrAndImpacts();
-    },
-    setDisplayZrrMeteorites: function (L) {
+    setDisplayZrrMeteorites: function (L, orangeIcon) {
       // On récupère les states sur les zrr et météorites
       // On fait l'affichage sur la carte
       // ZRR
       console.log(this.zrr);
-      for (const id in this.zrr) {
-        //console.log(this.zrr[id]);
+      
+      for (let data of this.zrr) {
         L.rectangle(
           [
-            [this.zrr[id].corner1[0], this.zrr[id].corner1[1]],
-            [this.zrr[id].corner2[0], this.zrr[id].corner2[1]],
+            [data[0][0], data[0][1]],
+            [data[1][0], data[1][1]],
           ],
           { color: "#FF0000", weight: 1 }
         ).addTo(mymap);
       }
 
       // Impacts
-      /*
-      for (const id of Object.keys(this.impacts)) {
-        L.marker([this.impacts[id].position[0], this.impacts[id].position[1]], {
+      for (let impact of this.impacts) {
+        
+        L.marker([impact.position[0], impact.position[1]], {
           icon: orangeIcon,
         })
           .addTo(mymap)
           .bindPopup(
-            `Météorite de type <strong>${this.impacts[id].composition}</strong>.<br>TTL restant: <strong>${this.impacts[id].ttl}</strong>s.`
+            `Météorite de type <strong>${impact.composition}</strong>.<br>TTL restant: <strong>${impact.ttl}</strong>s.`
           );
+
       }
-      */
-    },
+      
+    }
   },
   async beforeMount() {
     const L = await import("leaflet");
 
     // Marqueurs: météorites (orange), joueur (vert)
-    /*
+    
     var orangeIcon = new L.Icon({
       iconUrl:
         "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png",
@@ -137,7 +136,6 @@ export default {
       popupAnchor: [1, -34],
       shadowSize: [41, 41],
     });
-    */
 
     var greenIcon = new L.Icon({
       iconUrl:
@@ -149,12 +147,6 @@ export default {
       popupAnchor: [1, -34],
       shadowSize: [41, 41],
     });
-
-    // On requête vers le serveur pour récupérer les ZRR mais aussi les coordonnées des météorites
-    // Cela permettra de savoir si le token stocké dans l'API Web Storage reste valide
-    // S'il n'est pas valide, nous n'aurons aucune informations concernant ces coordonnées
-    this.getZrrAndMeteorites();
-    this.setDisplayZrrMeteorites(L);
 
     // ProcÃ©dure d'initialisation: si les coordonnées du joueur n'existent pas: on centre vers nautibus, sinon on centre vers le joueur
     if (this.position === null) {
@@ -174,6 +166,11 @@ export default {
         .bindPopup("<strong>Votre position</strong>")
         .openPopup();
     }
+
+    // On requête vers le serveur pour récupérer les ZRR mais aussi les coordonnées des météorites
+    // Cela permettra de savoir si le token stocké dans l'API Web Storage reste valide
+    // S'il n'est pas valide, nous n'aurons aucune informations concernant ces coordonnées
+    this.setDisplayZrrMeteorites(L, orangeIcon);
 
     // CrÃ©ation d'un "tile layer" (permet l'affichage sur la carte)
     L.tileLayer(

@@ -9,11 +9,11 @@ const mutations = {
     decreaseTtl(state) {
         state.ttl--;
     },
-    addZrr(state, zrr) {
-        state.zrr.push(zrr);
+    setZrr(state, res) {
+        state.zrr = res;
     },
-    addImpact(state, impact) {
-        state.impacts.push(impact);
+    setImpacts(state, impacts) {
+        state.impacts = impacts;
     }
 };
 
