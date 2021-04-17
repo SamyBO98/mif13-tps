@@ -3,42 +3,53 @@
     <h1>Page utilisateur</h1>
   </div>
 
-  <div v-if="token !== null">
+  <div v-if="token !== undefined">
     <h3>Informations</h3>
     <h4>Login: {{ login }}</h4>
-    <h4>Image: 
-      <span v-if="image === null">Aucune définie pour le moment</span>
-      <image v-else v-bind="image" />
-    </h4>
-    <h4>TTL: {{ ttl }}</h4>
-    <h4>Coordonnées: 
-      <span v-if="coordonnees === null">Aucune définie pour le moment</span>
-      <span v-else>lat: {{ coordonnees[0] }}, lon: {{ coordonnees[1] }}</span>
+    <h4>Image:
+      <span v-if="image === ''">Aucune image définie pour l'utilisateur.</span>
+      <span v-else>{{ image }}</span>
     </h4>
 
     <h3>Mise à jour de l'image</h3>
+    <form @submit.prevent="formUpdateImage()" id="updateImageForm">
+      <label for="imageURL">URL de l'image:</label>
+      <input type="text" :key="image" name="imageURL" id="imageURL" />
+      <br />
+      <button type="submit">Mettre à jour</button>
+    </form>
   </div>
+
   <div v-else>
-    <h3>Vous n'êtes pas connecté. Veuillez vous connecter dans la page de login.</h3>
+    <h3>Aucun token n'est stocké. Veuillez vous connecter dans la page de connexion.</h3>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { apiUpdateImage } from "../api-client/game";
 
 export default {
   name: "User",
-  computed: mapState({
-    token: (state) => state.token,
-    login: (state) => state.login,
-    image: (state) => state.imageUrl,
-    ttl: (state) => state.ttl,
-    coordonnees: (state) => state.playerPosition,
-  }),
+  data() {
+    return {
+      token: localStorage.getItem("token"),
+      login: localStorage.getItem("login"),
+      image: localStorage.getItem("image"),
+    }
+  },
   methods: {
-    ...mapActions([
-      'updateImage'
-    ]),
+    formUpdateImage() {
+      var form = document.getElementById("updateImageForm");
+      var imageUrl = form.querySelector("input[name=imageURL]").value;
+
+      apiUpdateImage(this.login, imageUrl, this.token.slice(7))
+        .then((resp) => {
+          console.log(resp);
+          localStorage.setItem("image", imageUrl);
+        }).catch((error) => {
+          console.log(error);
+        });
+    },
   },
 };
 </script>

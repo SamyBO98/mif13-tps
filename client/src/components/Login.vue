@@ -3,7 +3,13 @@
     <h1>Page de connexion</h1>
   </div>
 
-  <div v-if="token === null">
+  <div v-if="token !== undefined" class="alert">
+    <h2>
+      Un token est stocké. S'il est invalide ou expiré, veuillez vous
+      reconnecter ici, sinon vous pouvez profiter de l'application.
+    </h2>
+  </div>
+  <div>
     <form @submit.prevent="formLogin()" id="loginForm">
       <label for="login">Nom du login:</label>
       <input type="text" :key="login" name="login" id="login" />
@@ -14,23 +20,23 @@
       <button type="submit">Se connecter</button>
     </form>
   </div>
-  <div v-else>
-    <h2>Vous êtes déja connecté. Vous pouvez voir vos informations dans la page de l'utilisateur</h2>
-  </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "Login",
+  data() {
+    return {
+      token: localStorage.getItem("token"),
+    }
+  },
   computed: mapState({
-    token: state => state.token,
+    token: (state) => state.token,
   }),
   methods: {
-    ...mapActions([
-      'login'
-    ]),
+    ...mapActions(["login"]),
     formLogin() {
       var form = document.getElementById("loginForm");
       var login = form.querySelector("input[name=login]").value;
@@ -38,10 +44,10 @@ export default {
 
       this.login({
         login: login,
-        password: password
+        password: password,
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -52,5 +58,13 @@ select {
   background-color: #2f4f4f !important;
   color: lightgray;
   border: 1px solid;
+}
+.alert {
+  margin: 2em auto;
+  width: 60%;
+  border-radius: 2em;
+  padding: 2em;
+  border: 2px solid #ff6347;
+  background-color: #ff7f50;
 }
 </style>

@@ -23,3 +23,53 @@ export function apiGetUser(login, token) {
         },
     );
 }
+
+export function apiUpdateImage(login, image, token) {
+    return axios.put(
+        `/express/resources/${login}/image`,
+        {
+            url: image,
+        },
+        {
+            headers: {
+                Authorization: token,
+            },
+        },
+    );
+}
+
+export function apiUpdatePlayerPositions(login, position, token) {
+    return axios.put(
+        `/express/resources/${login}/position`,
+        {
+            position: position,
+        },
+        {
+            headers: {
+                Authorization: token,
+            },
+        },
+    );
+}
+
+export function apiGetZrr(token) {
+    return axios.get(
+        `/express/zrr`,
+        {
+            headers: {
+                Authorization: token,
+            },
+        },
+    );
+}
+
+export function apiGetImpacts(token) {
+    return axios.get(
+        `/express/resources`,
+        {
+            headers: {
+                Authorization: token,
+            },
+        },
+    );
+}
