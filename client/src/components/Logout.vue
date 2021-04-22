@@ -3,7 +3,7 @@
     <h1>Page de déconnexion</h1>
   </div>
 
-  <div v-if="token !== undefined">
+  <div v-if="token !== null">
     <form @submit.prevent="formLogin()" id="logoutForm">
       <button type="submit">Se déconnecter</button>
     </form>
@@ -22,6 +22,9 @@ export default {
     return {
       token: localStorage.getItem("token"),
     }
+  },
+  computed: {
+    
   },
   methods: {
     ...mapActions(["logout"]),

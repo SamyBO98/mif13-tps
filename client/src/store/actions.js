@@ -15,7 +15,6 @@ const actions = {
                 localStorage.setItem("token", resp.headers.authorization);
                 dispatch('getUser', datas.login);
                 dispatch('getAllZrrAndImpacts');
-                router.push('user');
             }).catch((error) => {
                 console.log(error);
             })
@@ -26,6 +25,7 @@ const actions = {
                 console.log(resp);
                 localStorage.clear();
                 commit('clear');
+                router.push('login');
             }).catch((error) => {
                 console.log(error);
             });
@@ -35,9 +35,10 @@ const actions = {
         apiGetUser(login, localStorage["token"].slice(7))
             .then((resp) => {
                 console.log(resp);
-                commit('updateUser', resp.data);
                 localStorage.setItem("login", resp.data.login);
                 localStorage.setItem("image", resp.data.image === null? "": resp.data.image);
+                commit('updateUser', resp.data);
+                router.push('user');
             }).catch((error) => {
                 console.log(error);
             });
@@ -82,6 +83,12 @@ const actions = {
             }).catch((error) => {
                 console.log(error);
             });
+    },
+    startGame({commit}) {
+        commit('setStartGame', true);
+    },
+    resetTtl({commit}) {
+        commit('setTtl', null);
     }
 };
 

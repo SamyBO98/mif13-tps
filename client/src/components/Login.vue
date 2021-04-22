@@ -3,7 +3,7 @@
     <h1>Page de connexion</h1>
   </div>
 
-  <div v-if="token !== undefined" class="alert">
+  <div v-if="token !== null" class="alert">
     <h2>
       Un token est stocké. S'il est invalide ou expiré, veuillez vous
       reconnecter ici, sinon vous pouvez profiter de l'application.
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapActions } from "vuex";
 
 export default {
   name: "Login",

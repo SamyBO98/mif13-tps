@@ -46,7 +46,18 @@ export default {
     zrr: (state) => state.zrr,
     ttl: (state) => state.ttl,
     impacts: (state) => state.impacts,
+    gameStarted: (state) => state.gameStarted,
   }),
+  data() {
+    return {
+      ttlTimeout: null,
+      positionTimeout: null,
+    }
+  },
+  unmounted() {
+    clearTimeout(this.ttlTimeout);
+    clearTimeout(this.positionTimeout);
+  },
   methods: {
     ...mapActions([
       "updatePlayerPositions",
@@ -59,9 +70,6 @@ export default {
         .addTo(mymap)
         .bindPopup("Votre coordonnée temporaire")
         .openPopup();
-
-      // Affichage Ã  la nouvelle position
-      mymap.setView([lat, lng], zoom);
 
       // La fonction de validation du formulaire renvoie false pour bloquer le rechargement de la page.
       return false;
@@ -86,7 +94,8 @@ export default {
       }
     },
     decreaseTtl: function () {
-      if (this.ttl !== null && this.ttl > 0) {
+      console.log("oui");
+      if (this.ttl !== null && this.ttl >= 0) {
         this.decreaseTtlAction();
       }
     },
@@ -118,7 +127,6 @@ export default {
           );
 
       }
-      
     }
   },
   async beforeMount() {
@@ -198,19 +206,21 @@ export default {
 
     // Clic sur la carte: event
     mymap.on("click", (e) => {
-      if (this.ttl > 0) {
-        lat = e.latlng.lat;
-        lng = e.latlng.lng;
+
+      lat = e.latlng.lat;
+      lng = e.latlng.lng;
+      // Affichage Ã  la nouvelle position
+      mymap.setView([lat, lng], zoom);
+      if (this.ttl > 0 && this.gameStarted === true) {
         this.updateMap(L, greenIcon);
       }
     });
 
+    //ttl qui diminue de 1 secondes à chaque fois
+    this.ttlTimeout = setInterval(this.decreaseTtl, 1000);
     // Fonction qui renvoie les coordonnées au serveur toutes les 5 secondes
     // Si rien n'a été mit (lat et lng a null), alors il ne se passera rien (on attendra les prochaines 5 secondes...)
-    window.setInterval(this.updatePlayerPosition, 5000, L, greenIcon);
-
-    //ttl qui diminue de 1 secondes à chaque fois
-    window.setInterval(this.decreaseTtl, 1000);
+    this.positionTimeout = setInterval(this.updatePlayerPosition, 5000, L, greenIcon);
   },
 };
 </script>

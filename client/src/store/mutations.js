@@ -20,6 +20,13 @@ const mutations = {
         state.playerPosition = null;
         state.impacts = [];
         state.zrr = [];
+        state.gameStarted = false;
+    },
+    setStartGame(state, value) {
+        state.gameStarted = value;
+    },
+    setTtl(state, value) {
+        state.ttl = value;
     },
 };
 

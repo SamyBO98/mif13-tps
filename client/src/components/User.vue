@@ -1,9 +1,10 @@
 <template>
   <div class="main-title">
     <h1>Page utilisateur</h1>
+    <h2>{{ testemit }}</h2>
   </div>
 
-  <div v-if="token !== undefined">
+  <div v-if="token !== undefined && token !== null">
     <h3>Informations</h3>
     <h4>Login: {{ login }}</h4>
     <h4>Image:
@@ -32,9 +33,9 @@ export default {
   name: "User",
   data() {
     return {
-      token: localStorage.getItem("token"),
-      login: localStorage.getItem("login"),
-      image: localStorage.getItem("image"),
+      token: null,
+      login: null,
+      image: null,
     }
   },
   methods: {
@@ -51,6 +52,11 @@ export default {
         });
     },
   },
+  async beforeMount() {
+    this.token = localStorage.getItem("token");
+    this.login = localStorage.getItem("login");
+    this.image = localStorage.getItem("image");
+  }
 };
 </script>
 
