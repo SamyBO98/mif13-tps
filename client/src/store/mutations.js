@@ -28,6 +28,9 @@ const mutations = {
     setTtl(state, value) {
         state.ttl = value;
     },
+    deleteImpact(state, index) {
+        state.impacts.splice(index, 1);
+    },
 };
 
 export default mutations;

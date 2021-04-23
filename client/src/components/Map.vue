@@ -8,9 +8,12 @@
   <section>
     <p class="content">
       <strong>Carte</strong><br />
-      <span v-if="ttl === null">Vous devez vous connecter pour récupérer votre TTL.</span>
+      <span v-if="ttl === null"
+        >Vous devez vous connecter pour récupérer votre TTL.</span
+      >
       <span v-else>
-        Il reste <strong>{{ ttl }}</strong>s.
+        Il reste <strong>{{ ttl }}</strong
+        >s.
         <br />
         <strong v-if="ttl === 0">Le TTL a atteint 0. Vous avez perdus!</strong>
       </span>
@@ -52,17 +55,14 @@ export default {
     return {
       ttlTimeout: null,
       positionTimeout: null,
-    }
+    };
   },
   unmounted() {
     clearTimeout(this.ttlTimeout);
     clearTimeout(this.positionTimeout);
   },
   methods: {
-    ...mapActions([
-      "updatePlayerPositions",
-      "decreaseTtlAction",
-    ]),
+    ...mapActions(["updatePlayerPositions", "decreaseTtlAction", "playerMeetImpact"]),
     updateMap: function (L, greenIcon) {
       // Mise à jour du marqueur temporaire pour indiquer au joueur sa nouvelle coordonnées temporaire (avant l'envoi des coordonnées au serveur)
       if (tempPlayerMarker != null) tempPlayerMarker.remove(mymap);
@@ -87,6 +87,18 @@ export default {
             .addTo(mymap)
             .bindPopup("<strong>Votre position</strong>")
             .openPopup();
+
+          var point1 = L.latLng(lat, lng);
+          var index = 0;
+          // Si l'utilisateur est proche d'une météorite, on affiche quelque chose
+          for (let impact of this.impacts) {
+            var point2 = L.latLng(impact.position[0], impact.position[1]);
+            if (point1.distanceTo(point2) <= 2.){
+              playerMarker.bindPopup(`<strong>Votre position</strong><br/>Vous avez gagné <strong>${impact.ttl} secondes</strong>`);
+              this.playerMeetImpact({impact: impact, index: index});
+            }
+            index = index + 1;
+          }
         }
 
         lat = null;
@@ -95,7 +107,7 @@ export default {
     },
     decreaseTtl: function () {
       console.log("oui");
-      if (this.ttl !== null && this.ttl >= 0) {
+      if (this.ttl !== null && this.ttl > 0) {
         this.decreaseTtlAction();
       }
     },
@@ -104,7 +116,7 @@ export default {
       // On fait l'affichage sur la carte
       // ZRR
       console.log(this.zrr);
-      
+
       for (let data of this.zrr) {
         L.rectangle(
           [
@@ -117,7 +129,6 @@ export default {
 
       // Impacts
       for (let impact of this.impacts) {
-        
         L.marker([impact.position[0], impact.position[1]], {
           icon: orangeIcon,
         })
@@ -125,15 +136,34 @@ export default {
           .bindPopup(
             `Météorite de type <strong>${impact.composition}</strong>.<br>TTL restant: <strong>${impact.ttl}</strong>s.`
           );
-
       }
-    }
+    },
+    getDistance: function (origin, destination) {
+      // return distance in meters
+      var lon1 = this.toRadian(origin[1]),
+        lat1 = this.toRadian(origin[0]),
+        lon2 = this.toRadian(destination[1]),
+        lat2 = this.toRadian(destination[0]);
+
+      var deltaLat = lat2 - lat1;
+      var deltaLon = lon2 - lon1;
+
+      var a =
+        Math.pow(Math.sin(deltaLat / 2), 2) +
+        Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(deltaLon / 2), 2);
+      var c = 2 * Math.asin(Math.sqrt(a));
+      var EARTH_RADIUS = 6371;
+      return c * EARTH_RADIUS * 1000;
+    },
+    toRadian: function (degree) {
+      return (degree * Math.PI) / 180;
+    },
   },
   async beforeMount() {
     const L = await import("leaflet");
 
     // Marqueurs: météorites (orange), joueur (vert)
-    
+
     var orangeIcon = new L.Icon({
       iconUrl:
         "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png",
@@ -201,26 +231,32 @@ export default {
     // Ajout d'un marker: Nautibus
     L.marker([45.78207, 4.86559])
       .addTo(mymap)
-      .bindPopup("EntrÃ©e du bÃ¢timent<br><strong>Nautibus</strong>.")
+      .bindPopup("Entrée du bâtiment<br><strong>Nautibus</strong>.")
       .openPopup();
 
     // Clic sur la carte: event
     mymap.on("click", (e) => {
-
       lat = e.latlng.lat;
       lng = e.latlng.lng;
-      // Affichage Ã  la nouvelle position
-      mymap.setView([lat, lng], zoom);
+    
       if (this.ttl > 0 && this.gameStarted === true) {
         this.updateMap(L, greenIcon);
       }
+
+      // Affichage Ã  la nouvelle position
+      mymap.setView([lat, lng], zoom);
     });
 
     //ttl qui diminue de 1 secondes à chaque fois
     this.ttlTimeout = setInterval(this.decreaseTtl, 1000);
     // Fonction qui renvoie les coordonnées au serveur toutes les 5 secondes
     // Si rien n'a été mit (lat et lng a null), alors il ne se passera rien (on attendra les prochaines 5 secondes...)
-    this.positionTimeout = setInterval(this.updatePlayerPosition, 5000, L, greenIcon);
+    this.positionTimeout = setInterval(
+      this.updatePlayerPosition,
+      5000,
+      L,
+      greenIcon
+    );
   },
 };
 </script>

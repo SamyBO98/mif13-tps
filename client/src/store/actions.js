@@ -15,6 +15,7 @@ const actions = {
                 localStorage.setItem("token", resp.headers.authorization);
                 dispatch('getUser', datas.login);
                 dispatch('getAllZrrAndImpacts');
+                dispatch('startGame');
             }).catch((error) => {
                 console.log(error);
             })
@@ -89,7 +90,17 @@ const actions = {
     },
     resetTtl({commit}) {
         commit('setTtl', null);
-    }
+    },
+    playerMeetImpact({commit, state}, datas) {
+        // On lance une requête pour vérifier si l'impact était encore disponible
+        // Si oui: on supprime l'impact et augmente le TTL
+        // Pour l'instant: on va juste augmenter le TTL et supprimer l'impact
+        var impact = datas.impact;
+        var index = datas.index;
+
+        commit('setTtl', state.ttl + impact.ttl);
+        commit('deleteImpact', index);
+    },
 };
 
 export default actions;
