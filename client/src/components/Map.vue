@@ -55,6 +55,7 @@ export default {
     return {
       ttlTimeout: null,
       positionTimeout: null,
+      meteorites: [],
     };
   },
   unmounted() {
@@ -62,7 +63,11 @@ export default {
     clearTimeout(this.positionTimeout);
   },
   methods: {
-    ...mapActions(["updatePlayerPositions", "decreaseTtlAction", "playerMeetImpact"]),
+    ...mapActions([
+      "updatePlayerPositions",
+      "decreaseTtlAction",
+      "playerMeetImpact",
+    ]),
     updateMap: function (L, greenIcon) {
       // Mise à jour du marqueur temporaire pour indiquer au joueur sa nouvelle coordonnées temporaire (avant l'envoi des coordonnées au serveur)
       if (tempPlayerMarker != null) tempPlayerMarker.remove(mymap);
@@ -93,9 +98,17 @@ export default {
           // Si l'utilisateur est proche d'une météorite, on affiche quelque chose
           for (let impact of this.impacts) {
             var point2 = L.latLng(impact.position[0], impact.position[1]);
-            if (point1.distanceTo(point2) <= 2.){
-              playerMarker.bindPopup(`<strong>Votre position</strong><br/>Vous avez gagné <strong>${impact.ttl} secondes</strong>`);
-              this.playerMeetImpact({impact: impact, index: index});
+            if (point1.distanceTo(point2) <= 2) {
+              playerMarker.bindPopup(
+                `<strong>Votre position</strong><br/>Vous avez gagné <strong>${impact.ttl} secondes</strong>`
+              );
+              this.playerMeetImpact({
+                impact: impact,
+                index: index,
+                meteorites: this.meteorites,
+                mymap: mymap,
+              });
+              break;
             }
             index = index + 1;
           }
@@ -129,14 +142,19 @@ export default {
 
       // Impacts
       for (let impact of this.impacts) {
-        L.marker([impact.position[0], impact.position[1]], {
+        // On met dans un tableau de données les markers pour les supprimer lorsque le joueur est à moins de 2 mètres
+        let marker = L.marker([impact.position[0], impact.position[1]], {
           icon: orangeIcon,
         })
           .addTo(mymap)
           .bindPopup(
             `Météorite de type <strong>${impact.composition}</strong>.<br>TTL restant: <strong>${impact.ttl}</strong>s.`
           );
+
+        this.meteorites.push(marker);
       }
+
+      //console.log(this.meteorites);
     },
     getDistance: function (origin, destination) {
       // return distance in meters
@@ -238,7 +256,7 @@ export default {
     mymap.on("click", (e) => {
       lat = e.latlng.lat;
       lng = e.latlng.lng;
-    
+
       if (this.ttl > 0 && this.gameStarted === true) {
         this.updateMap(L, greenIcon);
       }
