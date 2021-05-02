@@ -119,6 +119,25 @@ const actions = {
     meteorites[index].remove(mymap);
     meteorites.splice(index, 1);
   },
+  authenticate({ commit, dispatch }, datas) {
+    var token = datas.token;
+    var login = datas.login;
+
+    // get datas about the user and commit it
+    apiGetUser(login, token.slice(7))
+      .then((resp) => {
+        commit("updateUser", resp.data);
+        dispatch("getAllZrrAndImpacts");
+        dispatch("startGame");
+        router.push("user");
+        console.log(resp);
+      })
+      .catch((error) => {
+        localStorage.clear();
+        router.push("login");
+        console.log(error);
+      });
+  },
 };
 
 export default actions;

@@ -9,6 +9,46 @@
   <router-view />
 </template>
 
+<script>
+import { mapActions } from "vuex";
+/**
+ * A chaque fois qu'on recharge la page, nous allong tenter un authenticate (pour vérifier si le token est bon)
+ * Si c'est bon, on récupère l'utilisateur stocké et on le redirige vers la page utilisateur
+ * Sinon on le redirige vers la page de connexion (en supprimant les données du token car ils sont invalides)
+ */
+export default {
+  name: "App",
+  data() {
+    return {
+      token: null,
+      login: null,
+      image: null,
+    };
+  },
+  methods: {
+    ...mapActions(["authenticate"]),
+  },
+  async beforeMount() {
+    this.token = localStorage.getItem("token");
+    this.login = localStorage.getItem("login");
+    this.image = localStorage.getItem("image");
+
+    if (
+      this.token !== undefined &&
+      this.login !== undefined &&
+      this.token !== null &&
+      this.login !== null
+    ) {
+      // On authenticate
+      this.authenticate({
+        login: this.login,
+        token: this.token,
+      });
+    }
+  },
+};
+</script>
+
 <style>
 * {
   margin: 0;
