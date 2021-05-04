@@ -1,0 +1,10 @@
+variables:
+  CI_SSH_KEY: "./gitlab-ci.pem"
+
+node:
+  image: node:latest # docker image with node
+  before_script:
+    - . setup-mvn-proxy.sh
+    - chmod 400 $CI_SSH_KEY
+  script:
+    - scp -r -o StrictHostKeyChecking=no -i $CI_SSH_KEY ./test-geolocalisation/* gitlabci@192.168.75.118:/var/www/html/geolocalisation
