@@ -29,7 +29,7 @@ function showMap(position) {
 	myPosition = L.marker([lat, lng]).addTo(mymap).bindPopup('<strong>Votre position</strong>').openPopup();
 
 	// Affichage à la nouvelle position
-	mymap.setView([lat, lng], zoom);
+	mymap.setView([lat, lng]);
 
 	return false;
 }
