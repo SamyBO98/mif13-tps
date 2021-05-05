@@ -101,6 +101,9 @@ const actions = {
   startGame({ commit }) {
     commit("setStartGame", true);
   },
+  stopGame({ commit }) {
+    commit("setStartGame", false);
+  },
   resetTtl({ commit }) {
     commit("setTtl", null);
   },

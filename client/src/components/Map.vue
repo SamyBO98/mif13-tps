@@ -55,18 +55,21 @@ export default {
     return {
       ttlTimeout: null,
       positionTimeout: null,
+      watchId: null,
       meteorites: [],
     };
   },
   unmounted() {
     clearTimeout(this.ttlTimeout);
-    clearTimeout(this.positionTimeout);
+    navigator.geolocation.clearWatch(this.watchId);
+    //clearTimeout(this.positionTimeout);
   },
   methods: {
     ...mapActions([
       "updatePlayerPositions",
       "decreaseTtlAction",
       "playerMeetImpact",
+      "stopGame",
     ]),
     updateMap: function (L, greenIcon) {
       // Mise à jour du marqueur temporaire pour indiquer au joueur sa nouvelle coordonnées temporaire (avant l'envoi des coordonnées au serveur)
@@ -79,21 +82,24 @@ export default {
       // La fonction de validation du formulaire renvoie false pour bloquer le rechargement de la page.
       return false;
     },
-    updatePlayerPosition(L, greenIcon) {
-      if (lat !== null && lng !== null && this.ttl > 0) {
-        this.updatePlayerPositions([lat, lng]);
+    updatePlayerPosition(position, L, greenIcon) {
+      let tempLat = position.coords.latitude;
+      let tempLon = position.coords.latitude;
+      console.log("PLAYER POSITION: " + tempLat + " - " + tempLon);
+      if (this.ttl > 0) {
+        this.updatePlayerPositions([tempLat, tempLon]);
         // Suppression des marqueurs temporaires et actuelles pour mettre à jour la nouvelle
         if (tempPlayerMarker !== null) tempPlayerMarker.remove(mymap);
         if (playerMarker !== null) playerMarker.remove(mymap);
 
         // Définition de la position actuelle du joueur
         if (this.position !== null) {
-          playerMarker = L.marker([lat, lng], { icon: greenIcon })
+          playerMarker = L.marker([tempLat, tempLon], { icon: greenIcon })
             .addTo(mymap)
             .bindPopup("<strong>Votre position</strong>")
             .openPopup();
 
-          var point1 = L.latLng(lat, lng);
+          var point1 = L.latLng(tempLat, tempLon);
           var index = 0;
           // Si l'utilisateur est proche d'une météorite, on affiche quelque chose
           for (let impact of this.impacts) {
@@ -113,15 +119,19 @@ export default {
             index = index + 1;
           }
         }
-
-        lat = null;
-        lng = null;
       }
+    },
+    errorUpdatePosition(error) {
+      console.log("GEOLOCALISATION ERROR: " + error);
     },
     decreaseTtl: function () {
       console.log("oui");
       if (this.ttl !== null && this.ttl > 0) {
         this.decreaseTtlAction();
+        if (this.ttl == 0) {
+          clearTimeout(this.ttlTimeout);
+          this.stopGame();
+        }
       }
     },
     setDisplayZrrMeteorites: function (L, orangeIcon) {
@@ -266,15 +276,25 @@ export default {
     });
 
     //ttl qui diminue de 1 secondes à chaque fois
-    this.ttlTimeout = setInterval(this.decreaseTtl, 1000);
+    if (this.gameStarted) {
+      this.ttlTimeout = setInterval(this.decreaseTtl, 1000);
+      // NEWS: geolocalisation updated
+      this.watchId = navigator.geolocation.watchPosition(function(position) {
+        this.updatePlayerPosition(position, L, greenIcon)
+      }, this.errorUpdatePosition, { timeout: 60000 });
+    }
+    
+
     // Fonction qui renvoie les coordonnées au serveur toutes les 5 secondes
     // Si rien n'a été mit (lat et lng a null), alors il ne se passera rien (on attendra les prochaines 5 secondes...)
+    /*
     this.positionTimeout = setInterval(
       this.updatePlayerPosition,
       5000,
       L,
       greenIcon
     );
+    */
   },
 };
 </script>

@@ -31,7 +31,13 @@ function showMap(position) {
 	// Affichage à la nouvelle position
 	mymap.setView([lat, lng]);
 
+	document.getElementById("geolocalisation").innerHTML = "COORDINATES: [" + lat + ", " + lng + "]";
+
 	return false;
+}
+
+function errorMap(error) {
+	document.getElementById("errorGeolocalisation").innerHTML = "ERROR: " + error;
 }
 
 // Mise à jour de la map
@@ -42,4 +48,5 @@ function updateMap() {
 	return false;
 }
 
-setInterval(updateMap, 5000);
+var watchId = navigator.geolocation.watchPosition(showMap, errorMap, { timeout: 20000 });
+//setInterval(updateMap, 5000);
