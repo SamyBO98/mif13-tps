@@ -32,6 +32,7 @@ function showMap(position) {
 	mymap.setView([lat, lng]);
 
 	document.getElementById("geolocalisation").innerHTML = "COORDINATES: [" + lat + ", " + lng + "]";
+	navigator.vibrate([500, 100, 500]);
 
 	return false;
 }
