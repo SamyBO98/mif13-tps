@@ -23,4 +23,11 @@ module.exports = {
       //new MyAwesomeWebpackPlugin()
     ],
   },
+  pwa: {
+    name: 'GP17 MIF13',
+    themeColor: '#4DBA87',
+    msTileColor: '#000000',
+    appleMobileWebAppCapable: 'yes',
+    appleMobileWebAppStatusBarStyle: 'black',
+  },
 };
