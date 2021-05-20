@@ -7,7 +7,8 @@
   <div v-if="token !== undefined && token !== null">
     <h3>Informations</h3>
     <h4>Login: {{ login }}</h4>
-    <h4>Image:
+    <h4>
+      Image:
       <span v-if="image === ''">Aucune image définie pour l'utilisateur.</span>
       <span v-else>{{ image }}</span>
     </h4>
@@ -22,7 +23,10 @@
   </div>
 
   <div v-else>
-    <h3>Aucun token n'est stocké. Veuillez vous connecter dans la page de connexion.</h3>
+    <h3>
+      Aucun token n'est stocké. Veuillez vous connecter dans la page de
+      connexion.
+    </h3>
   </div>
 </template>
 
@@ -36,7 +40,7 @@ export default {
       token: null,
       login: null,
       image: null,
-    }
+    };
   },
   methods: {
     formUpdateImage() {
@@ -47,7 +51,8 @@ export default {
         .then((resp) => {
           console.log(resp);
           localStorage.setItem("image", imageUrl);
-        }).catch((error) => {
+        })
+        .catch((error) => {
           console.log(error);
         });
     },
@@ -56,7 +61,7 @@ export default {
     this.token = localStorage.getItem("token");
     this.login = localStorage.getItem("login");
     this.image = localStorage.getItem("image");
-  }
+  },
 };
 </script>
 

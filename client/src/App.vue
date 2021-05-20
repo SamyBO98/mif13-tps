@@ -1,16 +1,20 @@
 <template>
-  <div id="nav">
+  <div class="nav" id="nav">
     <router-link to="/">Home</router-link>
     <router-link to="/about">About</router-link>
     <router-link to="/login">Connexion</router-link>
     <router-link to="/logout">Déconnexion</router-link>
     <router-link to="/user">Utilisateur</router-link>
+    <a href="javascript:void(0);" class="icon" v-on:click="myFunction()">
+      <i class="fa fa-bars"></i>
+    </a>
   </div>
   <router-view />
 </template>
 
 <script>
 import { mapActions } from "vuex";
+import "./registerServiceWorker";
 /**
  * A chaque fois qu'on recharge la page, nous allong tenter un authenticate (pour vérifier si le token est bon)
  * Si c'est bon, on récupère l'utilisateur stocké et on le redirige vers la page utilisateur
@@ -27,6 +31,14 @@ export default {
   },
   methods: {
     ...mapActions(["authenticate"]),
+    myFunction() {
+      var x = document.getElementById("nav");
+      if (x.className === "nav") {
+        x.className += " responsive";
+      } else {
+        x.className = "nav";
+      }
+    },
   },
   async beforeMount() {
     this.token = localStorage.getItem("token");
@@ -63,25 +75,54 @@ export default {
   color: #2c3e50;
 }
 
-#nav {
-  padding: 2em;
-  background-color: #42b983;
+.nav {
+  overflow: hidden;
+  background-color: #333;
+  margin-bottom: 3em;
 }
 
-#nav a {
-  margin: 0 0.5em;
-  padding: 0.5em;
-  border-radius: 0.5em;
-  font-weight: bold;
-  color: #2c3e50;
+.nav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
   text-decoration: none;
+  font-size: 17px;
 }
 
-#nav a.router-link-exact-active {
-  background-color: #dddddd;
+.nav a:hover {
+  background-color: #42b983;
+  color: black;
 }
 
-.main-title {
-  margin: 3em;
+.nav .icon {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .nav a:not(:first-child) {
+    display: none;
+  }
+  .nav a.icon {
+    float: right;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .nav.responsive {
+    position: relative;
+  }
+  .nav.responsive .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .nav.responsive a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
 }
 </style>

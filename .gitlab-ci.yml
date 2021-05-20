@@ -6,5 +6,8 @@ node:
   before_script:
     - . setup-mvn-proxy.sh
     - chmod 400 $CI_SSH_KEY
+    - cd client
+    - npm run build
+    - cd ..
   script:
-    - scp -r -o StrictHostKeyChecking=no -i $CI_SSH_KEY ./test-geolocalisation/* gitlabci@192.168.75.118:/var/www/html/geolocalisation
+    - scp -r -o StrictHostKeyChecking=no -i $CI_SSH_KEY ./client/dist/* gitlabci@192.168.75.118:/var/www/html/client

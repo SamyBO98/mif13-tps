@@ -21,11 +21,9 @@ export default {
   data() {
     return {
       token: localStorage.getItem("token"),
-    }
+    };
   },
-  computed: {
-    
-  },
+  computed: {},
   methods: {
     ...mapActions(["logout"]),
     formLogin() {
