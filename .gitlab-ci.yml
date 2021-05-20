@@ -7,6 +7,7 @@ node:
     - . setup-mvn-proxy.sh
     - chmod 400 $CI_SSH_KEY
     - cd client
+    - npm install
     - npm run build
     - cd ..
   script:
