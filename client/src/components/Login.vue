@@ -49,12 +49,18 @@ export default {
 </script>
 
 <style scoped>
-input,
-input[type="submit"],
-select {
+input {
   background-color: #2f4f4f !important;
   color: lightgray;
   border: 1px solid;
+  height: 48px;
+  margin: 0.5em;
+  padding: 0.5em;
+}
+button {
+  height: 48px;
+  margin: 0.5em;
+  padding: 0.5em;
 }
 .alert {
   margin: 2em auto;

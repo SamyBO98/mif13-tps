@@ -1,6 +1,7 @@
 var webpack = require("webpack");
 
 module.exports = {
+  publicPath: "/client",
   devServer: {
     port: 4000,
     proxy: {

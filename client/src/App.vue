@@ -5,7 +5,7 @@
     <router-link to="/login">Connexion</router-link>
     <router-link to="/logout">Déconnexion</router-link>
     <router-link to="/user">Utilisateur</router-link>
-    <a href="javascript:void(0);" class="icon" v-on:click="myFunction()">
+    <a class="icon" v-on:click="myFunction()">
       <i class="fa fa-bars"></i>
     </a>
   </div>
@@ -59,13 +59,16 @@ export default {
 
     // service workers
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./sw.js").then(function(reg) {
-        // registration worked
-        console.log('Registration succeeded. Scope is ' + reg.scope);
-      }).catch(function(error) {
-        // registration failed
-        console.log('Registration failed with ' + error);
-      });
+      navigator.serviceWorker
+        .register("./sw.js")
+        .then(function (reg) {
+          // registration worked
+          console.log("Registration succeeded. Scope is " + reg.scope);
+        })
+        .catch(function (error) {
+          // registration failed
+          console.log("Registration failed with " + error);
+        });
     }
   },
 };
