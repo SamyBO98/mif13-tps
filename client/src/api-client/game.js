@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export function apiLogin(login, password) {
-  return axios.post("/spring/login", null, {
+  return axios.post("http://192.168.75.118:8080/v1/login", null, {
     params: {
       login: login,
       password: password,
@@ -10,7 +10,7 @@ export function apiLogin(login, password) {
 }
 
 export function apiLogout(token) {
-  return axios.delete("/spring/logout", {
+  return axios.delete("http://192.168.75.118:8080/v1/logout", {
     headers: {
       Authorization: token,
     },
@@ -18,7 +18,7 @@ export function apiLogout(token) {
 }
 
 export function apiGetUser(login, token) {
-  return axios.get(`/express/user/${login}`, {
+  return axios.get(`https://192.168.75.118/game/api/user/${login}`, {
     headers: {
       Authorization: token,
     },
@@ -27,7 +27,7 @@ export function apiGetUser(login, token) {
 
 export function apiUpdateImage(login, image, token) {
   return axios.put(
-    `/express/resources/${login}/image`,
+    `https://192.168.75.118/game/api/resources/${login}/image`,
     {
       url: image,
     },
@@ -41,7 +41,7 @@ export function apiUpdateImage(login, image, token) {
 
 export function apiUpdatePlayerPositions(login, position, token) {
   return axios.put(
-    `/express/resources/${login}/position`,
+    `https://192.168.75.118/game/api/resources/${login}/position`,
     {
       position: position,
     },
@@ -54,7 +54,7 @@ export function apiUpdatePlayerPositions(login, position, token) {
 }
 
 export function apiGetZrr(token) {
-  return axios.get(`/express/zrr`, {
+  return axios.get(`https://192.168.75.118/game/api/zrr`, {
     headers: {
       Authorization: token,
     },
@@ -62,7 +62,7 @@ export function apiGetZrr(token) {
 }
 
 export function apiGetImpacts(token) {
-  return axios.get(`/express/resources`, {
+  return axios.get(`https://192.168.75.118/game/api/resources`, {
     headers: {
       Authorization: token,
     },
