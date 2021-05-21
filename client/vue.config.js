@@ -1,7 +1,6 @@
 var webpack = require('webpack')
 
 module.exports = {
-  baseUrl: "/client",
   devServer: {
     port: 4000,
     proxy: {
