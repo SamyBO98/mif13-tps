@@ -1,4 +1,7 @@
+var webpack = require('webpack')
+
 module.exports = {
+  baseUrl: "/client",
   devServer: {
     port: 4000,
     proxy: {
@@ -20,7 +23,9 @@ module.exports = {
   },
   configureWebpack: {
     plugins: [
-      //new MyAwesomeWebpackPlugin()
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify('production')
+      })
     ],
   },
   pwa: {
