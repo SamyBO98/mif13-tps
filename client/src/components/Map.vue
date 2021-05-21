@@ -152,7 +152,7 @@ export default {
       alert(`Erreur de mise à jour des coordonnées du joueur: ${error}`);
     },
     decreaseTtl: function () {
-      console.log("oui");
+      //console.log("oui");
       if (this.ttl !== null && this.ttl > 0) {
         this.decreaseTtlAction();
         if (this.ttl == 0) {
@@ -180,6 +180,8 @@ export default {
       console.log(this.zrr);
 
       for (let data of this.zrr) {
+        console.log("QUOI");
+        console.log(data);
         L.rectangle(
           [
             [data[0][0], data[0][1]],

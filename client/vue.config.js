@@ -1,4 +1,4 @@
-var webpack = require('webpack')
+var webpack = require("webpack");
 
 module.exports = {
   devServer: {
@@ -23,8 +23,8 @@ module.exports = {
   configureWebpack: {
     plugins: [
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify('production')
-      })
+        "process.env.NODE_ENV": JSON.stringify("production"),
+      }),
     ],
   },
   pwa: {
@@ -33,13 +33,12 @@ module.exports = {
     msTileColor: "#000000",
     appleMobileWebAppCapable: "yes",
     appleMobileWebAppStatusBarStyle: "black",
-    
-    workboxPluginMode: 'InjectManifest',
+
+    workboxPluginMode: "InjectManifest",
     workboxOptions: {
       // swSrc is required in InjectManifest mode.
-      swSrc: 'src/sw.js'
+      swSrc: "src/sw.js",
       // ...other Workbox options...
-    }
-
+    },
   },
 };

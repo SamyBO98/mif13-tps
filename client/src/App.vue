@@ -14,7 +14,6 @@
 
 <script>
 import { mapActions } from "vuex";
-import "./registerServiceWorker";
 /**
  * A chaque fois qu'on recharge la page, nous allong tenter un authenticate (pour vérifier si le token est bon)
  * Si c'est bon, on récupère l'utilisateur stocké et on le redirige vers la page utilisateur
@@ -55,6 +54,17 @@ export default {
       this.authenticate({
         login: this.login,
         token: this.token,
+      });
+    }
+
+    // service workers
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js").then(function(reg) {
+        // registration worked
+        console.log('Registration succeeded. Scope is ' + reg.scope);
+      }).catch(function(error) {
+        // registration failed
+        console.log('Registration failed with ' + error);
       });
     }
   },
