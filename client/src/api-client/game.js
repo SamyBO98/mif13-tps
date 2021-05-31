@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export function apiLogin(login, password) {
-  return axios.post("https://192.168.75.118/api/v1/login", null, {
+  return axios.post("https://proxy-tps-m1if13-2019.univ-lyon1.fr/118/v1/login", null, {
     params: {
       login: login,
       password: password,
@@ -10,7 +10,7 @@ export function apiLogin(login, password) {
 }
 
 export function apiLogout(token) {
-   return axios.delete("https://192.168.75.118/api/v1/logout", {
+   return axios.delete("https://proxy-tps-m1if13-2019.univ-lyon1.fr/118/v1/logout", {
     headers: {
       Authorization: token,
     },
