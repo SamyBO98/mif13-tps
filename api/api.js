@@ -18,10 +18,10 @@ var jsonParser = bodyParser.json()
 // Middleware that is specific to this router
 router.use(function timeLog(req, res, next) {
     if (req.headers.authorization) {
-        const authorization = req.headers.authorization;
-        const origin = "*/*";
+        var authorization = req.headers.authorization;
+        var origin = "*";
 
-        axios.get("http://192.168.75.118:8080/v1/authenticate", null, {
+        axios.get("https://proxy-tps-m1if13-2019.univ-lyon1.fr/118/v1/authenticate", {
             params: {
                 token: authorization,
                 origin: origin
@@ -29,7 +29,7 @@ router.use(function timeLog(req, res, next) {
         }).then(() => {
             next();
         }).catch(error => {
-            return res.status(401).send(error.message);
+            return res.status(401).send(error);
         });
     } else {
         return res.status(403).send("Votre requête n'a pas détecté de token stocké dans le header.");
@@ -58,7 +58,7 @@ router.get('/user/:login', function(req, res) {
     let resources = geoResources.getAll();
     for (const id of Object.keys(resources)) {
         if (resources[id].role === "player" && resources[id].login === login) {
-            return res.status(204).send(resources[id]);
+            return res.send(resources[id]);
         }
     }
     return res.status(404).send('User not found in the game');

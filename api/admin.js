@@ -12,7 +12,7 @@ var geoResources = require('./classes/GeoResources').class
 var zrr = require('./classes/Zrr').class
 
 // MOCK OBJECT: REQUETE VERS SPRING POUR RECUPERER TOUT LES UTILISATEURS ET ON LES INITIALISE PAR DEFAUT
-axios.get("http://192.168.75.118:8080/v1/users").then(resp => {
+axios.get("https://proxy-tps-m1if13-2019.univ-lyon1.fr/118/v1/users").then(resp => {
     console.log(resp.data);
   for (user in resp.data) {
     var newUser = new userClass.class(
