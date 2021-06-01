@@ -23,13 +23,12 @@ export default {
   name: "App",
   data() {
     return {
-      token: null,
-      login: null,
-      image: null,
+      token: localStorage.getItem("token"),
+      login: localStorage.getItem("login"),
     };
   },
   methods: {
-    ...mapActions(["authenticate"]),
+    ...mapActions(["authenticate", "redirectUser"]),
     myFunction() {
       var x = document.getElementById("nav");
       if (x.className === "nav") {
@@ -40,25 +39,21 @@ export default {
     },
   },
   async beforeMount() {
-    // ask for notifications
-    Notification.requestPermission();
-
-    this.token = localStorage.getItem("token");
-    this.login = localStorage.getItem("login");
-    this.image = localStorage.getItem("image");
-
-    if (
-      this.token !== undefined &&
-      this.login !== undefined &&
-      this.token !== null &&
-      this.login !== null
-    ) {
+    // On vérifie si un token est stocké: si oui on l'authentifie, sinon on le dirige vers la page de connexion
+    if (this.token !== null && this.login !== null) {
+      console.log("Un token est stocké");
       // On authenticate
       this.authenticate({
         login: this.login,
         token: this.token,
       });
+    } else {
+      console.log("Aucun stocké détecté");
+      this.redirectUser();
     }
+
+    // ask for notifications
+    Notification.requestPermission();
 
     // service workers
     if ("serviceWorker" in navigator) {

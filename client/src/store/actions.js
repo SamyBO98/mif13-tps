@@ -4,6 +4,7 @@ import { apiUpdatePlayerPositions } from "../api-client/game";
 import { apiGetZrr } from "../api-client/game";
 import { apiGetImpacts } from "../api-client/game";
 import { apiLogout } from "../api-client/game";
+import { apiImpactCapturedByPlayer } from "../api-client/game";
 import router from "../router";
 
 const actions = {
@@ -87,7 +88,10 @@ const actions = {
       .then((resp) => {
         let res = new Array();
         for (const id of Object.keys(resp.data)) {
-          if (resp.data[id].role === "impact") {
+          if (
+            resp.data[id].role === "impact" &&
+            resp.data[id].capturedBy === null
+          ) {
             console.log(resp.data[id]);
             res.push(resp.data[id]);
           }
@@ -116,11 +120,20 @@ const actions = {
     var meteorites = datas.meteorites;
     var mymap = datas.mymap;
 
-    commit("setTtl", state.ttl + impact.ttl);
-    commit("deleteImpact", index);
-
-    meteorites[index].remove(mymap);
-    meteorites.splice(index, 1);
+    apiImpactCapturedByPlayer(
+      localStorage["token"].slice(7),
+      localStorage["login"],
+      impact.id
+    )
+      .then(() => {
+        commit("setTtl", state.ttl + impact.ttl);
+        commit("deleteImpact", index);
+        meteorites[index].remove(mymap);
+        meteorites.splice(index, 1);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
   authenticate({ commit, dispatch }, datas) {
     var token = datas.token;
@@ -140,6 +153,9 @@ const actions = {
         router.push("login");
         console.log(error);
       });
+  },
+  redirectUser() {
+    router.push("login");
   },
 };
 

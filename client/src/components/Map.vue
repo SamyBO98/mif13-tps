@@ -25,6 +25,7 @@
         >Vous devez vous connecter pour récupérer votre TTL.</span
       >
       <span v-else>
+        Vos coordonnées | {{ playerPosition }} <br />
         Il reste <strong>{{ ttl }}</strong
         >s.
         <br />
@@ -84,6 +85,8 @@ export default {
       "decreaseTtlAction",
       "playerMeetImpact",
       "stopGame",
+      "getAllZrrAndImpacts",
+      "startGame",
     ]),
     updateMap: function (L, greenIcon) {
       // Mise à jour du marqueur temporaire pour indiquer au joueur sa nouvelle coordonnées temporaire (avant l'envoi des coordonnées au serveur)
@@ -96,7 +99,7 @@ export default {
       // La fonction de validation du formulaire renvoie false pour bloquer le rechargement de la page.
       return false;
     },
-    async updatePlayerPosition(position) {
+    async updatePlayerPositionAndZrrAndImpacts(position) {
       const L = await import("leaflet");
 
       const greenIcon = new L.Icon({
@@ -110,9 +113,25 @@ export default {
         shadowSize: [41, 41],
       });
 
+      const orangeIcon = new L.Icon({
+        iconUrl:
+          "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png",
+        shadowUrl:
+          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41],
+      });
+
+      // on actualise le zrr et les météorites et on vérifie selon les nouvelles informations si l'utilisateur est proche d'une météorite
+      this.meteorites = [];
+      this.getAllZrrAndImpacts();
+      this.setDisplayZrrMeteorites(L, orangeIcon);
+      this.startGame();
+
       let tempLat = position.coords.latitude;
       let tempLon = position.coords.longitude;
-      console.log("PLAYER POSITION: " + tempLat + " - " + tempLon);
       if (this.ttl > 0) {
         this.updatePlayerPositions([tempLat, tempLon]);
         // Suppression des marqueurs temporaires et actuelles pour mettre à jour la nouvelle
@@ -204,26 +223,6 @@ export default {
       }
 
       //console.log(this.meteorites);
-    },
-    getDistance: function (origin, destination) {
-      // return distance in meters
-      var lon1 = this.toRadian(origin[1]),
-        lat1 = this.toRadian(origin[0]),
-        lon2 = this.toRadian(destination[1]),
-        lat2 = this.toRadian(destination[0]);
-
-      var deltaLat = lat2 - lat1;
-      var deltaLon = lon2 - lon1;
-
-      var a =
-        Math.pow(Math.sin(deltaLat / 2), 2) +
-        Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(deltaLon / 2), 2);
-      var c = 2 * Math.asin(Math.sqrt(a));
-      var EARTH_RADIUS = 6371;
-      return c * EARTH_RADIUS * 1000;
-    },
-    toRadian: function (degree) {
-      return (degree * Math.PI) / 180;
     },
   },
   async beforeMount() {
@@ -319,7 +318,7 @@ export default {
       this.ttlTimeout = setInterval(this.decreaseTtl, 1000);
       // NEWS: geolocalisation updated
       this.watchId = navigator.geolocation.watchPosition(
-        this.updatePlayerPosition,
+        this.updatePlayerPositionAndZrrAndImpacts,
         this.errorUpdatePosition,
         { timeout: 60000 }
       );
@@ -327,14 +326,6 @@ export default {
 
     // Fonction qui renvoie les coordonnées au serveur toutes les 5 secondes
     // Si rien n'a été mit (lat et lng a null), alors il ne se passera rien (on attendra les prochaines 5 secondes...)
-    /*
-    this.positionTimeout = setInterval(
-      this.updatePlayerPosition,
-      5000,
-      L,
-      greenIcon
-    );
-    */
   },
 };
 </script>

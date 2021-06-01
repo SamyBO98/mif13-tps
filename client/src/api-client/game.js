@@ -10,7 +10,7 @@ export function apiLogin(login, password) {
 }
 
 export function apiLogout(token) {
-   return axios.delete("https://192.168.75.118/api/v1/logout", {
+  return axios.delete("https://192.168.75.118/api/v1/logout", {
     headers: {
       Authorization: token,
     },
@@ -67,4 +67,18 @@ export function apiGetImpacts(token) {
       Authorization: token,
     },
   });
+}
+
+export function apiImpactCapturedByPlayer(token, login, idImpact) {
+  return axios.put(
+    `https://192.168.75.118/game/api/capture/${idImpact}`,
+    {
+      login: login,
+    },
+    {
+      headers: {
+        Authorization: token,
+      },
+    }
+  );
 }
