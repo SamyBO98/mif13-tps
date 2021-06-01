@@ -13,7 +13,7 @@ var zrr = require('./classes/Zrr').class
 var idImpact = 0
 
 // MOCK OBJECT: REQUETE VERS SPRING POUR RECUPERER TOUT LES UTILISATEURS ET ON LES INITIALISE PAR DEFAUT
-axios.get("https://192.168.75.118/api/v1/users").then(resp => {
+axios.get("http://192.168.75.118:8080/v1/users").then(resp => {
     console.log(resp.data);
   for (user in resp.data) {
     var newUser = new userClass.class(
