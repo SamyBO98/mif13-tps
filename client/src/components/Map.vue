@@ -166,10 +166,8 @@ export default {
     notificateEndGame() {
       const notifTitle = `MIF13 GP17`;
       const notifBody = `Fin de partie. Le TTL à atteint 0.`;
-      const notifImg = `../../public/img/icons/favicon-32x32.png`;
       const options = {
         body: notifBody,
-        icon: notifImg,
       };
       new Notification(notifTitle, options);
     },

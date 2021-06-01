@@ -40,6 +40,9 @@ export default {
     },
   },
   async beforeMount() {
+    // ask for notifications
+    Notification.requestPermission();
+
     this.token = localStorage.getItem("token");
     this.login = localStorage.getItem("login");
     this.image = localStorage.getItem("image");
