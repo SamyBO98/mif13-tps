@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -44,7 +43,7 @@ public class OperationController {
             @ApiResponse(responseCode = "204", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Wrong login or password")
     })
-    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118", "http://192.168.75.118:3376", "https://192.168.75.118"})
+    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118", "https://192.168.75.118", "https://proxy-tps-m1if13-2019.univ-lyon1.fr"})
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestParam("login") @Schema(example = "otman-le-rigolo") String login, @RequestParam("password") @Schema(example = "password") String password, @RequestHeader("Origin") String origin) {
         //Check if the user exists
@@ -78,7 +77,7 @@ public class OperationController {
             @ApiResponse(responseCode = "204", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Error: User not exists / Token is wrong / User is not connected")
     })
-    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118", "http://192.168.75.118:3376", "https://192.168.75.118"})
+    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118", "https://192.168.75.118", "https://proxy-tps-m1if13-2019.univ-lyon1.fr"})
     @DeleteMapping("/logout")
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token){
         //Get the request servlet
@@ -107,12 +106,12 @@ public class OperationController {
 
 
     @Operation(summary = "Authenticate user", description = "Authenticate an existing user", responses = {
-            @ApiResponse(responseCode = "204", description = "OK"),
+            @ApiResponse(responseCode = "200", description = "User login"),
             @ApiResponse(responseCode = "404", description = "Error: Token is wrong / User is not connected")
     })
-    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118", "http://192.168.75.118:3376", "https://192.168.75.118"})
+    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118", "https://192.168.75.118", "https://proxy-tps-m1if13-2019.univ-lyon1.fr"})
     @GetMapping("/authenticate")
-    public ResponseEntity<Void> authenticate(@RequestParam("token") @Schema(example = "edit-this-token") String token, @RequestParam("origin") @Schema(example = "*/*") String origin) {
+    public String authenticate(@RequestParam("token") @Schema(example = "edit-this-token") String token, @RequestParam("origin") @Schema(example = "*/*") String origin) {
         //Get the request servlet
         HttpServletRequest request = getRequest();
 
@@ -124,11 +123,11 @@ public class OperationController {
                 throw new UserConnectedException(login, false);
             }
 
+            return login;
+
         } catch (NullPointerException | JWTVerificationException e) {
             throw new TokenException();
         }
-
-        return ResponseEntity.status(204).build();
     }
 
 

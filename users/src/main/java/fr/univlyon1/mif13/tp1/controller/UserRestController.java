@@ -37,7 +37,7 @@ public class UserRestController {
                     @Content(mediaType = "text/html", schema = @Schema(description = "All user's login on a single HTML page"))
             }))
     @GetMapping(value = "/users", produces = { "application/json", "application/xml" })
-    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118", "http://192.168.75.118:8080", "https://192.168.75.118", "proxy-tps-m1if13-2019.univ-lyon1.fr"})
+    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118:8080", "https://192.168.75.118", "https://proxy-tps-m1if13-2019.univ-lyon1.fr"})
     @ResponseBody
     public Users getAllUsers() {
         return new Users(userDao.getAll());
@@ -48,7 +48,7 @@ public class UserRestController {
      * @return list of users (HTML).
      */
     @GetMapping(value = "/users", produces = "text/html")
-    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118", "http://192.168.75.118:8080", "https://192.168.75.118", "proxy-tps-m1if13-2019.univ-lyon1.fr"})
+    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118:8080", "https://192.168.75.118", "https://proxy-tps-m1if13-2019.univ-lyon1.fr"})
     @ResponseBody
     public ModelAndView getAllUsersHTML() {
         ModelAndView mav = new ModelAndView("users");
@@ -71,7 +71,7 @@ public class UserRestController {
             @ApiResponse(responseCode = "400", description = "User not exists", content = @Content())
     })
     @GetMapping(value = "/users/{login}", produces = { "application/json", "application/xml" })
-    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118", "http://192.168.75.118:8080", "https://192.168.75.118", "proxy-tps-m1if13-2019.univ-lyon1.fr"})
+    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118:8080", "https://192.168.75.118", "https://proxy-tps-m1if13-2019.univ-lyon1.fr"})
     @ResponseBody
     public User getUser(@PathVariable("login") @Schema(example = "otman-le-rigolo") @NotNull String login) {
         //Check if the user exists
@@ -89,7 +89,7 @@ public class UserRestController {
      * @return User's data.
      */
     @GetMapping(value = "/users/{login}", produces = "text/html")
-    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118", "http://192.168.75.118:8080", "https://192.168.75.118", "proxy-tps-m1if13-2019.univ-lyon1.fr"})
+    @CrossOrigin(origins = {"http://localhost:4000", "http://localhost:8080", "http://localhost:3376", "http://localhost", "http://192.168.75.118:8080", "https://192.168.75.118", "https://proxy-tps-m1if13-2019.univ-lyon1.fr"})
     public ModelAndView getUserHtml(@PathVariable("login") @Schema(example = "otman-le-rigolo") @NotNull String login) {
         //Check if the user exists
         Optional<User> opUser = userDao.get(login);

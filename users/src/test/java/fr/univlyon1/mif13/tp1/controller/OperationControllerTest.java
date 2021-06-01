@@ -106,7 +106,7 @@ public class OperationControllerTest {
                 .get(url)
                 .param("token", goodLogin())
                 .param("origin", "http://localhost"))
-                .andExpect(status().is(204));
+                .andExpect(status().is(200));
 
         //Launch request (forget parameter)
         mock.perform(MockMvcRequestBuilders
