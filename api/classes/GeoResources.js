@@ -16,4 +16,13 @@ class GeoResources {
         return this.size;
     }
 
+    static getImpact(id){
+        for (const id of Object.keys(this.map)) {
+            if (this.map[id].role === "impact" && this.map[id].id === id) {
+                return this.map[id];
+            }
+        }
+        return null;
+    }
+
 } module.exports.class = GeoResources

@@ -10,6 +10,7 @@ var latLngClass = require('./classes/LatLng')
 var meteoriteClass = require('./classes/Meteorite')
 var geoResources = require('./classes/GeoResources').class
 var zrr = require('./classes/Zrr').class
+var idImpact = 0
 
 // MOCK OBJECT: REQUETE VERS SPRING POUR RECUPERER TOUT LES UTILISATEURS ET ON LES INITIALISE PAR DEFAUT
 axios.get("https://192.168.75.118/api/v1/users").then(resp => {
@@ -96,12 +97,15 @@ router.post('/impact', function (req, res) {
     }
 
     let meteorite = new meteoriteClass.class(
+        idImpact,
         new latLngClass.class(1.0 * lat, 1.0 * lng).getLatLng(),
         String(type),
         1 * ttl
     );
     
     geoResources.add(meteorite);
+
+    idImpact++;
 
     res.status(204).send("Succesfull operation");
 })

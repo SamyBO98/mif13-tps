@@ -19,9 +19,9 @@ var jsonParser = bodyParser.json()
 router.use(function timeLog(req, res, next) {
     if (req.headers.authorization) {
         var authorization = req.headers.authorization;
-        var origin = "*";
+        var origin = "http://192.168.75.118";
 
-        axios.get("https://proxy-tps-m1if13-2019.univ-lyon1.fr/118/v1/authenticate", {
+        axios.get("http://192.168.75.118:8080/v1/authenticate", {
             params: {
                 token: authorization,
                 origin: origin
@@ -95,6 +95,32 @@ router.put('/resources/:userId/image', jsonParser, function (req, res) {
     }
 
     res.status(404).send('User not found');
+})
+
+// Set the meteorite captured by an user (captured by a user)
+router.put('/capture/:impactId', jsonParser, function (req, res) {
+    const impactId = req.params.impactId;
+    const login = res.body.login;
+
+    // make sure the user exists
+    axios.get(`/user/${login}`).then(() => {
+
+        let impact = geoResources.getImpact(impactId);
+
+        if (impact == null){
+            res.status(404).send('La météorite est introuvable');
+        } else {
+            if (impact.isCaptured()){
+                res.status(400).send('La météorite à déja été capturée par un joueur');
+            } else {
+                impact.setCapturedBy(login);
+                res.status(204).send('Successful operation');
+            }
+        }
+
+    }).catch((error) => {
+        res.status(404).send('User not found in the request of the impact');
+    })
 })
 
 module.exports = router

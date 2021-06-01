@@ -35,7 +35,10 @@ function getAllImpacts() {
                 //marker for impacts
                 L.marker([impact[id].position[0], impact[id].position[1]], { icon: orangeIcon })
                     .addTo(mymap)
-                    .bindPopup(`Météorite de type <strong>${impact[id].composition}</strong>.<br>TTL restant: <strong>${impact[id].ttl}</strong>s.`);
+                    .bindPopup(`Météorite d'id ${impact[id].id} de type 
+                        <strong>${impact[id].composition}</strong>.
+                        <br>TTL restant: <strong>${impact[id].ttl}</strong>s.
+                        <br>${impact[id].capturedBy !== null? `Capturée par <strong>${impact[id].capturedBy}</strong>.`: `Non capturée.`}`);
 
 
                 console.log(`Composition: ${impact[id].composition}, position: [${impact[id].position[0]}, ${impact[id].position[1]}], ttl: ${impact[id].ttl}`);
