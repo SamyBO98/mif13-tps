@@ -25,7 +25,6 @@
         >Vous devez vous connecter pour récupérer votre TTL.</span
       >
       <span v-else>
-        Vos coordonnées | {{ playerPosition }} <br />
         Il reste <strong>{{ ttl }}</strong
         >s.
         <br />
@@ -125,6 +124,9 @@ export default {
       });
 
       // on actualise le zrr et les météorites et on vérifie selon les nouvelles informations si l'utilisateur est proche d'une météorite
+      for (let mateorite of this.meteorites) {
+        mateorite.remove(mymap);
+      }
       this.meteorites = [];
       this.getAllZrrAndImpacts();
       this.setDisplayZrrMeteorites(L, orangeIcon);
