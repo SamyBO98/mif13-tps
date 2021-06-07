@@ -46,16 +46,6 @@ router.get('/resources', function (req, res) {
     res.send(geoResources.getAll());
 })
 
-// Get all players
-router.get('/players', function(req, res) {
-    res.send(geoResources.getPlayers());
-})
-
-// Get all located players
-router.get('/players', function(req, res) {
-    res.send(geoResources.getLocatedPlayers());
-})
-
 // Get all zrr
 router.get('/zrr', function (req, res) {
     res.send(zrr.getAll());
