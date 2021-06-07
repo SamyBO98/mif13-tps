@@ -51,7 +51,6 @@ Icon.Default.mergeOptions({
 let lat = null,
   lng = null,
   zoom = 19;
-let tempPlayerMarker = null;
 let playerMarker = null;
 let mymap = {};
 
@@ -62,15 +61,17 @@ export default {
     zrr: (state) => state.zrr,
     ttl: (state) => state.ttl,
     impacts: (state) => state.impacts,
+    otherPlayers: (state) => state.otherPlayers,
     gameStarted: (state) => state.gameStarted,
   }),
   data() {
     return {
       ttlTimeout: null,
-      positionTimeout: null,
       watchId: null,
       geolocation: navigator.geolocation,
-      meteorites: [],
+      impactsMarkers: [],
+      zrrMarkers: [],
+      otherPlayersMarkers: [],
     };
   },
   unmounted() {
@@ -84,23 +85,14 @@ export default {
       "decreaseTtlAction",
       "playerMeetImpact",
       "stopGame",
-      "getAllZrrAndImpacts",
+      "getAllZrr",
+      "getAllResources",
       "startGame",
     ]),
-    updateMap: function (L, greenIcon) {
-      // Mise à jour du marqueur temporaire pour indiquer au joueur sa nouvelle coordonnées temporaire (avant l'envoi des coordonnées au serveur)
-      if (tempPlayerMarker != null) tempPlayerMarker.remove(mymap);
-      tempPlayerMarker = L.marker([lat, lng], { icon: greenIcon })
-        .addTo(mymap)
-        .bindPopup("Votre coordonnée temporaire")
-        .openPopup();
-
-      // La fonction de validation du formulaire renvoie false pour bloquer le rechargement de la page.
-      return false;
-    },
-    async updatePlayerPositionAndZrrAndImpacts(position) {
+    async updateDatasAndMarkers(position) {
       const L = await import("leaflet");
 
+      // Marqueurs: météorites (orange), joueur (vert), autres joueurs (rouge)
       const greenIcon = new L.Icon({
         iconUrl:
           "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
@@ -123,54 +115,154 @@ export default {
         shadowSize: [41, 41],
       });
 
-      // on actualise le zrr et les météorites et on vérifie selon les nouvelles informations si l'utilisateur est proche d'une météorite
-      for (let mateorite of this.meteorites) {
-        mateorite.remove(mymap);
-      }
-      this.meteorites = [];
-      this.getAllZrrAndImpacts();
-      this.setDisplayZrrMeteorites(L, orangeIcon);
-      this.startGame();
+      const redIcon = new L.Icon({
+        iconUrl:
+          "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+        shadowUrl:
+          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41],
+      });
 
-      let tempLat = position.coords.latitude;
-      let tempLon = position.coords.longitude;
+      // On supprime les markers
+      this.deleteMarkers();
+
       if (this.ttl > 0) {
-        this.updatePlayerPositions([tempLat, tempLon]);
-        // Suppression des marqueurs temporaires et actuelles pour mettre à jour la nouvelle
-        if (tempPlayerMarker !== null) tempPlayerMarker.remove(mymap);
-        if (playerMarker !== null) playerMarker.remove(mymap);
+        // On met à jour les données (store)
+        this.updateDatas(position);
 
-        // Définition de la position actuelle du joueur
-        if (this.position !== null) {
-          playerMarker = L.marker([tempLat, tempLon], { icon: greenIcon })
-            .addTo(mymap)
-            .bindPopup("<strong>Votre position</strong>")
-            .openPopup();
+        // On met à jour les markers (affichage)
+        this.displayMarkers(L, position, greenIcon, orangeIcon, redIcon);
 
-          var point1 = L.latLng(tempLat, tempLon);
-          var index = 0;
-          // Si l'utilisateur est proche d'une météorite, on affiche quelque chose
-          for (let impact of this.impacts) {
-            var point2 = L.latLng(impact.position[0], impact.position[1]);
-            if (point1.distanceTo(point2) <= 2) {
-              playerMarker.bindPopup(
-                `<strong>Votre position</strong><br/>Vous avez gagné <strong>${impact.ttl} secondes</strong>`
-              );
-              this.playerMeetImpact({
-                impact: impact,
-                index: index,
-                meteorites: this.meteorites,
-                mymap: mymap,
-              });
-              break;
-            }
-            index = index + 1;
-          }
-        }
+        // On vérifie si le joueur est proche d'une météorite
+        this.checkIfPlayerMeetImpact(L, position);
       }
     },
     errorUpdatePosition(error) {
       alert(`Erreur de mise à jour des coordonnées du joueur: ${error}`);
+    },
+    deleteMarkers() {
+      // On supprime tout les markers: zrr, impacts, joueurs
+      if (playerMarker !== null) playerMarker.remove(mymap);
+
+      for (let zrrMarker of this.zrrMarkers) {
+        zrrMarker.remove(mymap);
+      }
+      this.zrrMarkers = [];
+
+      for (let impactMarkers of this.impactsMarkers) {
+        impactMarkers.remove(mymap);
+      }
+      this.impactsMarkers = [];
+
+      for (let otherPlayersMarker of this.otherPlayersMarkers) {
+        otherPlayersMarker.remove(mymap);
+      }
+      this.otherPlayersMarkers = [];
+    },
+    updateDatas(position) {
+      // On lance les requêtes dans le fichier actions pour mettre à jour le store: coordonnées des joueurs, impacts non récupérées, zones de zrr
+      this.updatePlayerPositions([
+        position.coords.latitude,
+        position.coords.longitude,
+      ]);
+
+      this.getAllZrr();
+      //console.log(this.zrr);
+
+      this.getAllResources();
+      //console.log(this.impacts);
+      //console.log(this.otherPlayers);
+    },
+    displayMarkers(L, position, greenIcon, orangeIcon, redIcon) {
+      // On met à jour les markers: ceux des joueurs, ceux des zrr et ceux des impacts non récupérées
+      playerMarker = L.marker(
+        [position.coords.latitude, position.coords.longitude],
+        { icon: greenIcon }
+      )
+        .addTo(mymap)
+        .bindPopup("<strong>Votre position</strong>")
+        .openPopup();
+
+      for (let zrr of this.zrr) {
+        let marker = L.rectangle(
+          [
+            [zrr[0][0], zrr[0][1]],
+            [zrr[1][0], zrr[1][1]],
+          ],
+          { color: "#FF0000", weight: 1 }
+        ).addTo(mymap);
+        this.zrrMarkers.push(marker);
+      }
+
+      for (let impact of this.impacts) {
+        let marker = L.marker([impact.position[0], impact.position[1]], {
+          icon: orangeIcon,
+        })
+          .addTo(mymap)
+          .bindPopup(
+            `Météorite de type <strong>${impact.composition}</strong>.<br>TTl: <strong>${impact.ttl}</strong>s.`
+          );
+
+        this.impactsMarkers.push(marker);
+      }
+
+      for (let otherPlayer of this.otherPlayers) {
+        let marker = L.marker(
+          [otherPlayer.position[0], otherPlayer.position[1]],
+          {
+            icon: redIcon,
+          }
+        )
+          .addTo(mymap)
+          .bindPopup(`Joueur <strong>${otherPlayer.login}</strong>.`);
+
+        this.otherPlayers.push(marker);
+      }
+    },
+    checkIfPlayerMeetImpact(L, position) {
+      // On vérifie si le joueur est proche d'une météorite: si oui on ajoute son ttl, on envoie une requête au serveur et le supprimons dans nos données
+      let meetedIndex = [];
+      let playerCoordinate = L.latLng(
+        position.coords.latitude,
+        position.coords.longitude
+      );
+      for (let i = 0; i < this.impacts.length; i++) {
+        let impactCoordinate = L.latLng(
+          this.impacts[i].position[0],
+          this.impacts[i].position[1]
+        );
+        if (playerCoordinate.distanceTo(impactCoordinate) <= 2) {
+          meetedIndex.push(i);
+        }
+      }
+
+      let totalTtlEarned = 0;
+      let totalImpactsMeeted = 0;
+      // On lance une requête pour chaque impact pour indiquer que celle-ci est récupérée par ce joueur
+      for (let i = meetedIndex.length - 1; i >= 0; i--) {
+        let ttlEarned = this.playerMeetImpact({
+          impact: this.impacts[i],
+          index: i,
+        });
+        totalTtlEarned += ttlEarned;
+        if (ttlEarned != 0) {
+          totalImpactsMeeted += 1;
+          this.impactsMarkers[i].remove(mymap);
+          this.impactsMarkers[i].splice(i, 1);
+        }
+      }
+
+      if (totalImpactsMeeted != 0) {
+        mymap.setView([position.coords.latitude, position.coords.longitude]);
+        playerMarker
+          .bindPopup(
+            `<strong>Votre position</strong><br>vous avez gagné <strong>${totalTtlEarned} secondes</strong> en ayant découvert <strong>${totalImpactsMeeted} météorite(s)</strong>.`
+          )
+          .openPopup();
+      }
     },
     decreaseTtl: function () {
       //console.log("oui");
@@ -192,56 +284,9 @@ export default {
       };
       new Notification(notifTitle, options);
     },
-    setDisplayZrrMeteorites: function (L, orangeIcon) {
-      // On récupère les states sur les zrr et météorites
-      // On fait l'affichage sur la carte
-      // ZRR
-      console.log(this.zrr);
-
-      for (let data of this.zrr) {
-        console.log("QUOI");
-        console.log(data);
-        L.rectangle(
-          [
-            [data[0][0], data[0][1]],
-            [data[1][0], data[1][1]],
-          ],
-          { color: "#FF0000", weight: 1 }
-        ).addTo(mymap);
-      }
-
-      // Impacts
-      for (let impact of this.impacts) {
-        // On met dans un tableau de données les markers pour les supprimer lorsque le joueur est à moins de 2 mètres
-        let marker = L.marker([impact.position[0], impact.position[1]], {
-          icon: orangeIcon,
-        })
-          .addTo(mymap)
-          .bindPopup(
-            `Météorite de type <strong>${impact.composition}</strong>.<br>TTL restant: <strong>${impact.ttl}</strong>s.`
-          );
-
-        this.meteorites.push(marker);
-      }
-
-      //console.log(this.meteorites);
-    },
   },
   async beforeMount() {
     const L = await import("leaflet");
-
-    // Marqueurs: météorites (orange), joueur (vert)
-
-    const orangeIcon = new L.Icon({
-      iconUrl:
-        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png",
-      shadowUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41],
-    });
 
     const greenIcon = new L.Icon({
       iconUrl:
@@ -256,27 +301,21 @@ export default {
 
     // ProcÃ©dure d'initialisation: si les coordonnées du joueur n'existent pas: on centre vers nautibus, sinon on centre vers le joueur
     if (this.position === null) {
-      console.log("position null");
       mymap = L.map("map", {
         center: [45.78207, 4.86559],
         zoom: zoom,
       });
     } else {
-      console.log("position not null");
       mymap = L.map("map", {
         center: this.position,
         zoom: zoom,
       });
+      // On définit le marqueur du joueur
       playerMarker = L.marker(this.position, { icon: greenIcon })
         .addTo(mymap)
         .bindPopup("<strong>Votre position</strong>")
         .openPopup();
     }
-
-    // On requête vers le serveur pour récupérer les ZRR mais aussi les coordonnées des météorites
-    // Cela permettra de savoir si le token stocké dans l'API Web Storage reste valide
-    // S'il n'est pas valide, nous n'aurons aucune informations concernant ces coordonnées
-    this.setDisplayZrrMeteorites(L, orangeIcon);
 
     // CrÃ©ation d'un "tile layer" (permet l'affichage sur la carte)
     L.tileLayer(
@@ -296,38 +335,26 @@ export default {
       }
     ).addTo(mymap);
 
-    // Ajout d'un marker: Nautibus
-    L.marker([45.78207, 4.86559])
-      .addTo(mymap)
-      .bindPopup("Entrée du bâtiment<br><strong>Nautibus</strong>.")
-      .openPopup();
-
-    // Clic sur la carte: event
+    // Evenement: clic sur la carte => on centre l'endroit sélectionné
     mymap.on("click", (e) => {
       lat = e.latlng.lat;
       lng = e.latlng.lng;
 
-      if (this.ttl > 0 && this.gameStarted === true) {
-        this.updateMap(L, greenIcon);
-      }
-
       // Affichage Ã  la nouvelle position
-      mymap.setView([lat, lng], zoom);
+      mymap.setView([lat, lng]);
     });
 
-    //ttl qui diminue de 1 secondes à chaque fois
+    //ttl qui diminue de 1 secondes à chaque fois si la géolocalisation marche et que la partie est lancée
     if (this.gameStarted && this.geolocation) {
+      this.startGame();
       this.ttlTimeout = setInterval(this.decreaseTtl, 1000);
       // NEWS: geolocalisation updated
       this.watchId = navigator.geolocation.watchPosition(
-        this.updatePlayerPositionAndZrrAndImpacts,
+        this.updateDatasAndMarkers,
         this.errorUpdatePosition,
         { timeout: 60000 }
       );
     }
-
-    // Fonction qui renvoie les coordonnées au serveur toutes les 5 secondes
-    // Si rien n'a été mit (lat et lng a null), alors il ne se passera rien (on attendra les prochaines 5 secondes...)
   },
 };
 </script>

@@ -31,6 +31,9 @@ const mutations = {
   deleteImpact(state, index) {
     state.impacts.splice(index, 1);
   },
+  setOtherPlayers(state, otherPlayers) {
+    state.otherPlayers = otherPlayers;
+  }
 };
 
 export default mutations;

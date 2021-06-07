@@ -8,6 +8,7 @@ export default createStore({
     zrr: [],
     playerPosition: null,
     impacts: [],
+    otherPlayers: [],
     gameStarted: false,
   },
   mutations,

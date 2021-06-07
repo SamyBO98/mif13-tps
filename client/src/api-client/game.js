@@ -61,7 +61,7 @@ export function apiGetZrr(token) {
   });
 }
 
-export function apiGetImpacts(token) {
+export function apiGetResources(token) {
   return axios.get(`https://192.168.75.118/game/api/resources`, {
     headers: {
       Authorization: token,

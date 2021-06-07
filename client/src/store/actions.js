@@ -2,7 +2,7 @@ import { apiLogin } from "../api-client/game";
 import { apiGetUser } from "../api-client/game";
 import { apiUpdatePlayerPositions } from "../api-client/game";
 import { apiGetZrr } from "../api-client/game";
-import { apiGetImpacts } from "../api-client/game";
+import { apiGetResources } from "../api-client/game";
 import { apiLogout } from "../api-client/game";
 import { apiImpactCapturedByPlayer } from "../api-client/game";
 import router from "../router";
@@ -12,10 +12,9 @@ const actions = {
     // datas contains login and password values
     apiLogin(datas.login, datas.password)
       .then((resp) => {
-        console.log(resp);
+        //console.log(resp);
         localStorage.setItem("token", resp.headers.authorization);
         dispatch("getUser", datas.login);
-        dispatch("getAllZrrAndImpacts");
         dispatch("startGame");
       })
       .catch((error) => {
@@ -38,7 +37,7 @@ const actions = {
     // get datas about the user and commit it
     apiGetUser(login, localStorage["token"].slice(7))
       .then((resp) => {
-        console.log(resp);
+        //console.log(resp);
         localStorage.setItem("login", resp.data.login);
         localStorage.setItem(
           "image",
@@ -68,35 +67,47 @@ const actions = {
   decreaseTtlAction({ commit }) {
     commit("decreaseTtl");
   },
-  getAllZrrAndImpacts({ commit }) {
-    // ZRR
+  getAllZrr({ commit }) {
     apiGetZrr(localStorage["token"].slice(7))
       .then((resp) => {
         var res = new Array();
         for (let zrr of resp.data) {
           res.push([zrr.corner1, zrr.corner2]);
         }
-        console.log(res);
+        //console.log(res);
         commit("setZrr", res);
       })
       .catch((error) => {
         console.log(error);
       });
-
-    // Impacts
-    apiGetImpacts(localStorage["token"].slice(7))
+  },
+  getAllResources({ commit }) {
+    apiGetResources(localStorage["token"].slice(7))
       .then((resp) => {
-        let res = new Array();
+        let impacts = new Array();
+        let otherPlayers = new Array();
         for (const id of Object.keys(resp.data)) {
           if (
             resp.data[id].role === "impact" &&
             resp.data[id].capturedBy === null
           ) {
-            console.log(resp.data[id]);
-            res.push(resp.data[id]);
+            impacts.push(resp.data[id]);
+          }
+          //console.log("OUI");
+          //console.log(resp.data[id]);
+          if (
+            resp.data[id].role === "player" &&
+            resp.data[id].position != undefined &&
+            resp.data[id].position !== null &&
+            resp.data[id].login !== localStorage["login"]
+          ) {
+            otherPlayers.push(resp.data[id]);
           }
         }
-        commit("setImpacts", res);
+        //console.log(resp.data);
+        //console.log(otherPlayers);
+        commit("setImpacts", impacts);
+        commit("setOtherPlayers", otherPlayers);
       })
       .catch((error) => {
         console.log(error);
@@ -117,8 +128,6 @@ const actions = {
     // Pour l'instant: on va juste augmenter le TTL et supprimer l'impact
     var impact = datas.impact;
     var index = datas.index;
-    var meteorites = datas.meteorites;
-    var mymap = datas.mymap;
 
     apiImpactCapturedByPlayer(
       localStorage["token"].slice(7),
@@ -128,11 +137,11 @@ const actions = {
       .then(() => {
         commit("setTtl", state.ttl + impact.ttl);
         commit("deleteImpact", index);
-        meteorites[index].remove(mymap);
-        meteorites.splice(index, 1);
+        return impact.ttl;
       })
       .catch((error) => {
         console.log(error);
+        return 0;
       });
   },
   authenticate({ commit, dispatch }, datas) {
@@ -143,10 +152,9 @@ const actions = {
     apiGetUser(login, token.slice(7))
       .then((resp) => {
         commit("updateUser", resp.data);
-        dispatch("getAllZrrAndImpacts");
         dispatch("startGame");
         router.push("user");
-        console.log(resp);
+        //console.log(resp);
       })
       .catch((error) => {
         localStorage.clear();
