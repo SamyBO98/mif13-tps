@@ -38,12 +38,22 @@ router.use(function timeLog(req, res, next) {
 
 // Get all living resources
 router.get('/', function (req, res) {
-    res.send("Ceci est un message confirmant que l'url fonctionne :o")
+    res.send("Ceci est un message confirmant que l'url fonctionne :o");
 })
 
 // Get all resources
 router.get('/resources', function (req, res) {
-    res.send(geoResources.getAll())
+    res.send(geoResources.getAll());
+})
+
+// Get all players
+router.get('/players', function(req, res) {
+    res.send(geoResources.getPlayers());
+})
+
+// Get all located players
+router.get('/players', function(req, res) {
+    res.send(geoResources.getLocatedPlayers());
 })
 
 // Get all zrr
@@ -72,7 +82,7 @@ router.put('/resources/:userId/position', jsonParser, function (req, res) {
     let users = geoResources.getAll();
     for (const id of Object.keys(users)) {
         if (users[id].role === "player" && users[id].login === login) {
-            users[id].setPosition(position);
+            users[id].setPosition([position[0], position[1]]);
             res.status(204).send('Successful operation');
         }
     }

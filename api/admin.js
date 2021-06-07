@@ -12,20 +12,6 @@ var geoResources = require('./classes/GeoResources').class
 var zrr = require('./classes/Zrr').class
 var idImpact = 0
 
-// MOCK OBJECT: REQUETE VERS SPRING POUR RECUPERER TOUT LES UTILISATEURS ET ON LES INITIALISE PAR DEFAUT
-axios.get("http://192.168.75.118:8080/v1/users").then(resp => {
-    console.log(resp.data);
-  for (user in resp.data) {
-    var newUser = new userClass.class(
-        resp.data[user], null, null, 60
-    );
-    geoResources.add(newUser);
-  }
-}).catch(error => {
-  console.log(error);
-});
-
-
 // Middleware that is specific to this router
 router.use(function timeLog(req, res, next) {
     next()
@@ -140,9 +126,6 @@ router.post('/player', function (req, res) {
         return;
     }
 
-    //TODO after: launch request for spring to get all users and check if this one exists
-    //
-
     // Check if user already exists
     let datas = geoResources.getAll();
     for (const id of Object.keys(datas)) {
@@ -152,17 +135,29 @@ router.post('/player', function (req, res) {
         }
     }
 
-    // Create player
-    let player = new userClass.class(
-        String(login),
-        String(imageUrl),
-        new latLngClass.class(1.0 * lat, 1.0 * lng).getLatLng(),
-        1 * ttl
-    );
+    // Check if the user exists in Spring database
+    axios.get(`http://192.168.75.118:8080/v1/users/${login}`).then(() => {
 
-    geoResources.add(player);
+        let position = null;
+        if (lng != "" && lat != "") {
+            position = new latLngClass.class(1.0 * lat, 1.0 * lng).getLatLng();
+        }
 
-    res.status(204).send("Succesfull operation");
+        // Create player
+        let player = new userClass.class(
+            String(login),
+            String(imageUrl),
+            position,
+            1 * ttl
+        );
+
+        geoResources.add(player);
+
+        res.status(204).send("Succesfull operation");
+    }).catch((error) => {
+        res.status(404).send(error);
+        return;
+    });
 })
 
 // Get all players from resources
