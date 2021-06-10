@@ -90,6 +90,7 @@ export default {
       "startGame",
     ]),
     async updateDatasAndMarkers(position) {
+      //console.log("updateDatasAndMarkers");
       const L = await import("leaflet");
 
       // Marqueurs: météorites (orange), joueur (vert), autres joueurs (rouge)
@@ -210,16 +211,19 @@ export default {
       }
 
       for (let otherPlayer of this.otherPlayers) {
-        let marker = L.marker(
-          [otherPlayer.position[0], otherPlayer.position[1]],
-          {
-            icon: redIcon,
-          }
-        )
-          .addTo(mymap)
-          .bindPopup(`Joueur <strong>${otherPlayer.login}</strong>.`);
+        if (otherPlayer.position !== undefined) {
+          let marker = L.marker(
+            [otherPlayer.position[0], otherPlayer.position[1]],
+            {
+              icon: redIcon,
+            }
+          )
+            .addTo(mymap)
+            .bindPopup(`Joueur <strong>${otherPlayer.login}</strong>.`);
 
-        this.otherPlayers.push(marker);
+          this.otherPlayers.push(marker);
+        }
+        
       }
     },
     checkIfPlayerMeetImpact(L, position) {
@@ -229,12 +233,15 @@ export default {
         position.coords.latitude,
         position.coords.longitude
       );
+      //console.log(this.impacts);
       for (let i = 0; i < this.impacts.length; i++) {
         let impactCoordinate = L.latLng(
           this.impacts[i].position[0],
           this.impacts[i].position[1]
         );
-        if (playerCoordinate.distanceTo(impactCoordinate) <= 2) {
+        let distance = playerCoordinate.distanceTo(impactCoordinate);
+        //console.log("Distance " + distance);
+        if (distance <= 2) {
           meetedIndex.push(i);
         }
       }
