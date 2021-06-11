@@ -1,0 +1,13 @@
+variables:
+  CI_SSH_KEY: "./gitlab-ci.pem"
+
+junit:
+  image: maven:3.6.1-jdk-11 # docker image with Maven
+  before_script:
+    - . setup-mvn-proxy.sh
+    - chmod 400 $CI_SSH_KEY
+  script:
+    - mvn clean package #does tests
+    - mvn verify #generate yaml documentation
+    - ls /builds/p1709456/mif13-tps/target
+    - scp -o StrictHostKeyChecking=no -i $CI_SSH_KEY /builds/p1709456/mif13-tps/target/tp1-0.0.1-SNAPSHOT.war gitlabci@192.168.75.118:/opt/tomcat/webapps/v1.war

@@ -1,0 +1,47 @@
+@font-face {
+	font-family: space;
+	src: url(./fonts/space_age.ttf);
+}
+
+@font-face {
+	font-family: nasalization;
+	src: url(./fonts/nasalization-rg.ttf);
+}
+
+@font-face {
+	font-family: xirod;
+	src: url(./fonts/xirod.ttf);
+}
+
+body {
+	background-color: #081F1F;
+	background-size: cover;
+	background-blend-mode: screen;
+	color: silver;
+	padding: 0 5% 0 5%;
+	margin: 5em 0;
+}
+
+h1 {
+	font-weight: bolder;
+	font-size: 4.5em;
+}
+
+h2 {
+	font-weight: bold;
+	font-size: 2em;
+}
+
+#map {
+	height: 400px;
+	width: 100%;
+	border: 1px solid;
+}
+
+.error {
+	color: red;
+}
+
+.success {
+	color: green;
+}
