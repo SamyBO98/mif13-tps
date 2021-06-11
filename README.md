@@ -52,6 +52,6 @@ Lorsque l'utilisateur se déplace, les marqueurs (_indiquant des impacts, d'autr
 
 Lorsque le TTL (_son temps de survie_) atteint 0, il a perdu et tout les marqueurs sont supprimés (_plus rien ne sera actualisé, **même pas sa position sur la carte**_).
 
-**Lancement:** Pour utiliser le package, il faudra utiliser les commandes `npm install` et `npm run build`. En mode développement, remplacez la dernière commande par `npm run serve`.
+**Lancement:** Pour utiliser le package, il faudra se rendre dans le dossier `client/client` utiliser les commandes `npm install` et `npm run build`. En mode développement, remplacez la dernière commande par `npm run serve`.
 
 **Aide:** Pour un peu plus de détails, vous pouvez accéder à la [branche concernée](https://forge.univ-lyon1.fr/p1709456/mif13-tps/-/tree/tp7).
