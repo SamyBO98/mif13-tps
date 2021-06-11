@@ -223,7 +223,6 @@ export default {
 
           this.otherPlayers.push(marker);
         }
-        
       }
     },
     checkIfPlayerMeetImpact(L, position) {
@@ -240,9 +239,9 @@ export default {
           this.impacts[i].position[1]
         );
         let distance = playerCoordinate.distanceTo(impactCoordinate);
-        //console.log("Distance " + distance);
-        if (distance <= 2) {
+        if (distance <= 15) {
           meetedIndex.push(i);
+          console.log("Distance " + distance);
         }
       }
 
@@ -258,7 +257,6 @@ export default {
         if (ttlEarned != 0) {
           totalImpactsMeeted += 1;
           this.impactsMarkers[i].remove(mymap);
-          this.impactsMarkers[i].splice(i, 1);
         }
       }
 
@@ -295,6 +293,7 @@ export default {
   async beforeMount() {
     const L = await import("leaflet");
 
+    /*
     const greenIcon = new L.Icon({
       iconUrl:
         "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
@@ -305,14 +304,14 @@ export default {
       popupAnchor: [1, -34],
       shadowSize: [41, 41],
     });
+    */
 
     // ProcÃ©dure d'initialisation: si les coordonnées du joueur n'existent pas: on centre vers nautibus, sinon on centre vers le joueur
-    if (this.position === null) {
-      mymap = L.map("map", {
-        center: [45.78207, 4.86559],
-        zoom: zoom,
-      });
-    } else {
+    mymap = L.map("map", {
+      center: [45.78207, 4.86559],
+      zoom: zoom,
+    });
+    /*} else {
       mymap = L.map("map", {
         center: this.position,
         zoom: zoom,
@@ -323,6 +322,7 @@ export default {
         .bindPopup("<strong>Votre position</strong>")
         .openPopup();
     }
+    */
 
     // CrÃ©ation d'un "tile layer" (permet l'affichage sur la carte)
     L.tileLayer(
@@ -349,6 +349,14 @@ export default {
 
       // Affichage Ã  la nouvelle position
       mymap.setView([lat, lng]);
+      /** 
+      this.updateDatasAndMarkers({
+        coords: {
+          latitude: lat,
+          longitude: lng,
+        },
+      });
+      */
     });
 
     //ttl qui diminue de 1 secondes à chaque fois si la géolocalisation marche et que la partie est lancée

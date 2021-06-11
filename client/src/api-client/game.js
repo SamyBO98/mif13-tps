@@ -70,6 +70,7 @@ export function apiGetResources(token) {
 }
 
 export function apiImpactCapturedByPlayer(token, login, idImpact) {
+  //console.log(token + " - " + login + " - " + idImpact);
   return axios.put(
     `https://192.168.75.118/game/api/capture/${idImpact}`,
     {
